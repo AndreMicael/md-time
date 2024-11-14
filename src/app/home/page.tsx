@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Footer from '@/app/components/Footer';
 import { fetchPosts } from '@/app/api/fetchPosts';
+import CardPost from '@/app/components/CardPost';
 
 interface Post {
     id: number;
@@ -53,17 +54,7 @@ const Home = () => {
     return (
         <div className="container mx-auto px-4 py-8">
             <h1 className="text-3xl font-bold mb-6">Blog</h1>
-            {!posts || posts.length === 0 ? (
-                <p>Nenhum post encontrado</p>
-            ) : (
-                <ul className="space-y-4">
-                    {posts.map((post) => (
-                        <li key={post.id} className="hover:bg-gray-100 p-2 rounded">
-                            <Link href={`/articles/${post.slug}`}>{post.title.rendered}</Link>
-                        </li>
-                    ))}
-                </ul>
-            )}
+            <CardPost posts={posts} />
             <Footer />
         </div>
     );

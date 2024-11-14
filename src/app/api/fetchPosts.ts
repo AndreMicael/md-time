@@ -1,12 +1,17 @@
 export const fetchPosts = async (): Promise<Post[]> => {
   try {
-    const response = await fetch('https://mdtime.com.br/wp-json/wp/v2/posts');
+    const response = await fetch('https://mdtime.com.br/wp-json/wp/v2/posts?_embed', {
+      next: { revalidate: 60 }
+    });
     if (!response.ok) {
       throw new Error('Falha ao buscar posts');
     }
-    return await response.json();
+    const posts = await response.json();
+    console.log('Resposta da API:', JSON.stringify(posts, null, 2));
+    return posts;
   } catch (error) {
-    throw error;
+    console.error('Erro ao buscar posts:', error);
+    return [];
   }
 };
 
