@@ -5,6 +5,7 @@ export default {
         './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
         './src/components/**/*.{js,ts,jsx,tsx,mdx}',
         './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+        './public/**/*.html',
     ],
     theme: {
         screens: {
@@ -29,5 +30,5 @@ export default {
             },
         },
     },
-    plugins: [],
+    plugins: [require('daisyui')],
 } satisfies Config;
