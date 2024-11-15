@@ -38,11 +38,16 @@ interface CardPostProps {
 
 const formatarData = (data: string): string => {
     const dataFormatada = new Date(data);
-    return dataFormatada.toLocaleDateString('pt-BR', {
-        month: 'short',
-        day: 'numeric',
-        year: '2-digit',
-    });
+    const meses = [
+        'jan', 'fev', 'mar', 'abr', 'mai', 'jun',
+        'jul', 'ago', 'set', 'out', 'nov', 'dez'
+    ];
+    
+    const dia = dataFormatada.getDate();
+    const mes = meses[dataFormatada.getMonth()];
+    const ano = dataFormatada.getFullYear();
+    
+    return `${dia} ${mes}, ${ano}`;
 };
 
 const retornarIdCategoria = (id: number): string => {
@@ -130,7 +135,7 @@ const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
                     <ul className="flex-row flex-wrap gap-2 justify-center items-start flex">
                         {currentPosts.map((post) => (
                             <Link key={post.id} href={`/articles/${post.slug}`}>
-                                <li className=" flex flex-col gap-2  w-[20vw] p-2 rounded mb-4">
+                                <li className=" flex hover:opacity-80 flex-col gap-2  w-[20vw] p-2 rounded mb-4">
                                     {post._embedded &&
                                         post._embedded['wp:featuredmedia'] &&
                                         post._embedded['wp:featuredmedia'].length > 0 && (
@@ -149,7 +154,7 @@ const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
                                             </div>
                                         )}
                                     <div className="text-xs font-medium w-[18vw] mx-auto">
-                                        {formatarData(post.date_gmt)} ⋅{' '}
+                                        {formatarData(post.date_gmt)} •{' '}
                                         {post.yoast_head_json.author}
                                     </div>
                                     <div className="w-[18vw] font-semibold text-sm mx-auto">
@@ -168,7 +173,7 @@ const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
                                             }}
                                         />
                                     </div>
-                                    <div className="w-[18vw] mx-auto text-sm text-justify">
+                                    <div className="w-[18vw] mx-auto text-sm font-medium text-justify">
                                         <span
                                             dangerouslySetInnerHTML={{
                                                 __html:
@@ -186,7 +191,7 @@ const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
                                         {post.categories.map((category) => (
                                             <span
                                                 key={category}
-                                                className="text-xs border px-3 py-1 rounded-xl font-semibold border-slate-800 text-slate-800"
+                                                className="text-xs border border-[1.5px] px-3 py-1 rounded-xl font-semibold border-slate-800 text-slate-800"
                                             >
                                                 {retornarIdCategoria(category)}
                                             </span>

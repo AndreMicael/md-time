@@ -8,6 +8,7 @@ import CardPost from '@/app/components/CardPost';
 import CardPostSkeleton from '../components/CardPostSkeleton';
 import Newsletter from '../components/Newsletter';
 import SliderSuperior from '../components/SliderSuperior';
+import Youtube from '../components/Youtube';
 
 interface Post {
     id: number;
@@ -74,11 +75,12 @@ const Home = () => {
 
     return (
         <div className="container mx-auto">
-            {posts.length > 0 && posts[0].uagb_featured_image_src?.full && (
-                <SliderSuperior post={posts[5]} />
+            {posts.length > 0 && posts[0].uagb_featured_image_src?.['2048x2048'] && (
+                <SliderSuperior post={posts[0]} />
             )}
 
             <div className="flex flex-col w-full">
+                <Youtube />
                 <CardPost posts={posts} />
                 <Newsletter />
             </div>
