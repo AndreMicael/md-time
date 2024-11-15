@@ -23,3 +23,7 @@ body {
 .borda {
     border: 1px solid red;
 }
+
+.links {
+    @apply relative after:content-[''] cursor-pointer py-4 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0 after:bg-dourado after:transition-all hover:after:h-1;
+}

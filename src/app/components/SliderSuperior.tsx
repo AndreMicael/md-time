@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import NavbarHome from './NavbarHome';
 
 interface SliderProps {
     post: {
@@ -28,14 +29,24 @@ interface SliderProps {
 const formatarData = (data: string): string => {
     const dataFormatada = new Date(data);
     const meses = [
-        'jan', 'fev', 'mar', 'abr', 'mai', 'jun',
-        'jul', 'ago', 'set', 'out', 'nov', 'dez'
+        'jan',
+        'fev',
+        'mar',
+        'abr',
+        'mai',
+        'jun',
+        'jul',
+        'ago',
+        'set',
+        'out',
+        'nov',
+        'dez',
     ];
-    
+
     const dia = dataFormatada.getDate();
     const mes = meses[dataFormatada.getMonth()];
     const ano = dataFormatada.getFullYear();
-    
+
     return `${dia} ${mes}, ${ano}`;
 };
 
@@ -65,11 +76,14 @@ const SliderSuperior: React.FC<SliderProps> = ({ post }) => {
     console.log(imageUrl);
 
     return (
-        <div className="w-full h-[80vh] relative clip-path-bottom-skew">
+        <div className="w-full relative clip-path-bottom-skew">
             {post && imageUrl && (
                 <div className="flex z-[4] h-[80vh] bg-red-400 flex-col">
-                    <div className="z-[2] absolute top-1 text-white"> Navbar </div>
-                    <div className="absolute bg-black p-4 rounded-2xl flex bg-opacity-40 flex-col gap-2 bottom-16 text-sm left-[20vw]  w-[35vw] z-[2] text-white">
+                    <div className="z-[2] w-full absolute top-1 mx-auto   text-white">
+                        {' '}
+                        <NavbarHome />{' '}
+                    </div>
+                    <div className="absolute bg-black p-4 rounded-2xl flex bg-opacity-40 flex-col gap-2 bottom-4 text-sm left-[20vw]  w-[35vw] z-[2] text-white">
                         <h1
                             className="font-bold text-lg"
                             dangerouslySetInnerHTML={{

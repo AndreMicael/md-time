@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import CardPostSkeleton from './CardPostSkeleton';
 
 interface Post {
@@ -39,14 +40,24 @@ interface CardPostProps {
 const formatarData = (data: string): string => {
     const dataFormatada = new Date(data);
     const meses = [
-        'jan', 'fev', 'mar', 'abr', 'mai', 'jun',
-        'jul', 'ago', 'set', 'out', 'nov', 'dez'
+        'jan',
+        'fev',
+        'mar',
+        'abr',
+        'mai',
+        'jun',
+        'jul',
+        'ago',
+        'set',
+        'out',
+        'nov',
+        'dez',
     ];
-    
+
     const dia = dataFormatada.getDate();
     const mes = meses[dataFormatada.getMonth()];
     const ano = dataFormatada.getFullYear();
-    
+
     return `${dia} ${mes}, ${ano}`;
 };
 
@@ -72,6 +83,7 @@ const retornarIdCategoria = (id: number): string => {
 const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [isLoading, setIsLoading] = useState(true);
+    const totalPages = Math.ceil(posts.length / postsPerPage);
 
     useEffect(() => {
         // Simula o carregamento inicial
@@ -85,23 +97,26 @@ const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
 
     // Efeito para sincronizar com a URL na inicialização
     useEffect(() => {
-        const url = new URL(window.location.href);
-        const pageParam = url.searchParams.get('page');
-        if (pageParam) {
-            const page = parseInt(pageParam);
-            if (page >= 1 && page <= totalPages) {
-                setCurrentPage(page);
+        if (typeof window !== 'undefined') {
+            try {
+                const url = new URL(window.location.href);
+                const pageParam = url.searchParams.get('page');
+                if (pageParam) {
+                    const page = parseInt(pageParam);
+                    if (page >= 1 && page <= totalPages) {
+                        setCurrentPage(page);
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao processar URL:', error);
             }
         }
-    }, []);
+    }, [totalPages]);
 
     // Calcula o índice inicial e final dos posts para a página atual
     const indexOfLastPost = currentPage * postsPerPage;
     const indexOfFirstPost = indexOfLastPost - postsPerPage;
     const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
-
-    // Calcula o número total de páginas
-    const totalPages = Math.ceil(posts.length / postsPerPage);
 
     // Função para mudar de página
     const paginate = (pageNumber: number) => {
@@ -134,7 +149,12 @@ const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
                 <>
                     <ul className="flex-row flex-wrap gap-2 justify-center items-start flex">
                         {currentPosts.map((post) => (
-                            <Link key={post.id} href={`/articles/${post.slug}`}>
+                            <Link
+                                key={post.id}
+                                href={`/${retornarIdCategoria(
+                                    post.categories[0],
+                                ).toLowerCase()}/articles/${post.slug}`}
+                            >
                                 <li className=" flex hover:opacity-80 flex-col gap-2  w-[20vw] p-2 rounded mb-4">
                                     {post._embedded &&
                                         post._embedded['wp:featuredmedia'] &&
