@@ -27,7 +27,7 @@ export default {
             colors: {
                 background: 'var(--background)',
                 foreground: 'var(--foreground)',
-                // azul: '#';
+                azul: '#0D265C',
             },
         },
     },

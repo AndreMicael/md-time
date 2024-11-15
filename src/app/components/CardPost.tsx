@@ -29,8 +29,6 @@ interface Post {
     };
 }
 
-
-
 interface CardPostProps {
     posts: Post[];
     postsPerPage?: number;
@@ -71,7 +69,7 @@ const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
     const indexOfLastPost = currentPage * postsPerPage;
     const indexOfFirstPost = indexOfLastPost - postsPerPage;
     const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
-    
+
     // Calcula o número total de páginas
     const totalPages = Math.ceil(posts.length / postsPerPage);
 
@@ -80,7 +78,7 @@ const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
         setCurrentPage(pageNumber);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
-    
+
     return (
         <div className="w-[65vw] mx-auto ">
             {!posts || posts.length === 0 ? (
@@ -90,7 +88,6 @@ const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
                     <ul className="flex-row flex-wrap gap-2 justify-center items-start flex">
                         {currentPosts.map((post) => (
                             <Link key={post.id} href={`/articles/${post.slug}`}>
-                                
                                 <li className=" flex flex-col gap-2  w-[20vw] p-2 rounded mb-4">
                                     {post._embedded &&
                                         post._embedded['wp:featuredmedia'] &&
@@ -98,7 +95,8 @@ const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
                                             <div className="w-[18vw] mx-auto h-[12vw] relative">
                                                 <Image
                                                     src={
-                                                        post._embedded['wp:featuredmedia'][0].source_url
+                                                        post._embedded['wp:featuredmedia'][0]
+                                                            .source_url
                                                     }
                                                     alt={post.title.rendered}
                                                     fill
@@ -109,14 +107,16 @@ const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
                                             </div>
                                         )}
                                     <div className="text-xs font-medium w-[18vw] mx-auto">
-                                        {formatarData(post.date_gmt)} ⋅ {post.yoast_head_json.author}
+                                        {formatarData(post.date_gmt)} ⋅{' '}
+                                        {post.yoast_head_json.author}
                                     </div>
                                     <div className="w-[18vw] font-semibold text-sm mx-auto">
                                         <span
                                             dangerouslySetInnerHTML={{
                                                 __html:
                                                     post.title.rendered.length > 80
-                                                        ? post.title.rendered.substring(0, 80) + '...'
+                                                        ? post.title.rendered.substring(0, 80) +
+                                                          '...'
                                                         : post.title.rendered +
                                                           (post.title.rendered.length < 80
                                                               ? '&nbsp;'.repeat(
@@ -131,7 +131,8 @@ const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
                                             dangerouslySetInnerHTML={{
                                                 __html:
                                                     post.excerpt.rendered.length > 95
-                                                        ? post.excerpt.rendered.substring(0, 95) + '...'
+                                                        ? post.excerpt.rendered.substring(0, 95) +
+                                                          '...'
                                                         : post.excerpt.rendered +
                                                           (post.excerpt.rendered.length < 95
                                                               ? '</br>'
@@ -163,19 +164,19 @@ const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
                                 className={`px-4 py-2 rounded ${
                                     currentPage === 1
                                         ? 'bg-gray-200 text-gray-500'
-                                        : 'bg-slate-800 text-white hover:bg-slate-700'
+                                        : 'bg-azul text-white hover:bg-indigo-900'
                                 }`}
                             >
                                 Anterior
                             </button>
-                            
+
                             {Array.from({ length: totalPages }).map((_, index) => (
                                 <button
                                     key={index + 1}
                                     onClick={() => paginate(index + 1)}
                                     className={`px-4 py-2 rounded ${
                                         currentPage === index + 1
-                                            ? 'bg-slate-800 text-white'
+                                            ? 'bg-azul text-white'
                                             : 'bg-gray-200 hover:bg-gray-300'
                                     }`}
                                 >
@@ -189,7 +190,7 @@ const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
                                 className={`px-4 py-2 rounded ${
                                     currentPage === totalPages
                                         ? 'bg-gray-200 text-gray-500'
-                                        : 'bg-slate-800 text-white hover:bg-slate-700'
+                                        : 'bg-azul text-white hover:bg-indigo-900'
                                 }`}
                             >
                                 Próxima
