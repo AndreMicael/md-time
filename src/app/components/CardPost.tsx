@@ -1,7 +1,8 @@
-import React from 'react';
+import { useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
+import CardPostSkeleton from './CardPostSkeleton';
 interface Post {
     id: number;
     slug: string;
@@ -64,6 +65,29 @@ const retornarIdCategoria = (id: number): string => {
 
 const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
     const [currentPage, setCurrentPage] = useState(1);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        // Simula o carregamento inicial
+        setIsLoading(true);
+        const timer = setTimeout(() => {
+            setIsLoading(false);
+        }, 1000);
+
+        return () => clearTimeout(timer);
+    }, []);
+
+    // Efeito para sincronizar com a URL na inicialização
+    useEffect(() => {
+        const url = new URL(window.location.href);
+        const pageParam = url.searchParams.get('page');
+        if (pageParam) {
+            const page = parseInt(pageParam);
+            if (page >= 1 && page <= totalPages) {
+                setCurrentPage(page);
+            }
+        }
+    }, []);
 
     // Calcula o índice inicial e final dos posts para a página atual
     const indexOfLastPost = currentPage * postsPerPage;
@@ -75,13 +99,30 @@ const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
 
     // Função para mudar de página
     const paginate = (pageNumber: number) => {
+        setIsLoading(true);
         setCurrentPage(pageNumber);
         window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        // Atualiza a URL com o número da página
+        const url = new URL(window.location.href);
+        url.searchParams.set('page', pageNumber.toString());
+        window.history.pushState({}, '', url);
+
+        // Simula o tempo de carregamento ao mudar de página
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 500);
     };
 
     return (
-        <div className="w-[65vw] mx-auto ">
-            {!posts || posts.length === 0 ? (
+        <div className="w-[65vw] mx-auto">
+            {isLoading ? (
+                <ul className="flex-row flex-wrap gap-2 justify-center items-start flex">
+                    {Array.from({ length: postsPerPage }).map((_, index) => (
+                        <CardPostSkeleton key={index} />
+                    ))}
+                </ul>
+            ) : !posts || posts.length === 0 ? (
                 <p>Nenhum post encontrado</p>
             ) : (
                 <>

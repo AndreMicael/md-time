@@ -8,6 +8,10 @@ export default {
         './public/**/*.html',
     ],
     theme: {
+        clipPath: {
+            'full-skew': 'polygon(0 50px, 100% 0, 100% calc(100% - 50px), 0 100%)',
+            'bottom-skew': 'polygon(0 0, 100% 0, 100% calc(100% - 50px), 0 100%)',
+        },
         screens: {
             xxs: '393px',
             xs: '480px',
@@ -28,8 +32,9 @@ export default {
                 background: 'var(--background)',
                 foreground: 'var(--foreground)',
                 azul: '#0D265C',
+                dourado: '#D0AC43',
             },
         },
     },
-    plugins: [require('daisyui')],
+    plugins: [require('daisyui'), require('tailwind-clip-path')],
 } satisfies Config;
