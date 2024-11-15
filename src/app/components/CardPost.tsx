@@ -23,6 +23,9 @@ interface Post {
         rendered: string;
     };
     date_gmt: string;
+    uagb_featured_image_src: {
+        '2048x2048': string;
+    };
     _embedded?: {
         'wp:featuredmedia'?: [
             {
@@ -59,25 +62,6 @@ const formatarData = (data: string): string => {
     const ano = dataFormatada.getFullYear();
 
     return `${dia} ${mes}, ${ano}`;
-};
-
-const retornarIdCategoria = (id: number): string => {
-    switch (id) {
-        case 10:
-            return 'Destaques';
-        case 8:
-            return 'Dicas';
-        case 17:
-            return 'Novidades';
-        case 9:
-            return 'Promoções';
-        case 7:
-            return 'Review';
-        case 12:
-            return 'Video';
-        default:
-            return 'Categoria desconhecida';
-    }
 };
 
 const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
@@ -149,76 +133,64 @@ const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
                 <>
                     <ul className="flex-row flex-wrap gap-2 justify-center items-start flex">
                         {currentPosts.map((post) => (
-                            <Link
-                                key={post.id}
-                                href={`/${retornarIdCategoria(
-                                    post.categories[0],
-                                ).toLowerCase()}/articles/${post.slug}`}
-                            >
-                                <li className=" flex hover:opacity-80 flex-col gap-2  w-[20vw] p-2 rounded mb-4">
-                                    {post._embedded &&
-                                        post._embedded['wp:featuredmedia'] &&
-                                        post._embedded['wp:featuredmedia'].length > 0 && (
-                                            <div className="w-[18vw] mx-auto h-[12vw] relative">
-                                                <Image
-                                                    src={
-                                                        post._embedded['wp:featuredmedia'][0]
-                                                            .source_url
-                                                    }
-                                                    alt={post.title.rendered}
-                                                    fill
-                                                    className="object-cover rounded-xl"
-                                                    sizes="(max-width: 768px) 192px, 192px"
-                                                    quality={100}
-                                                />
-                                            </div>
-                                        )}
-                                    <div className="text-xs font-medium w-[18vw] mx-auto">
-                                        {formatarData(post.date_gmt)} •{' '}
-                                        {post.yoast_head_json.author}
-                                    </div>
-                                    <div className="w-[18vw] font-semibold text-sm mx-auto">
+                            <li className="flex hover:opacity-80 flex-col gap-2 w-[20vw] p-2 rounded mb-4">
+                                <div className="w-[18vw] mx-auto h-[12vw] relative">
+                                    <Image
+                                        src={
+                                            post.uagb_featured_image_src?.['2048x2048'] ||
+                                            post._embedded?.['wp:featuredmedia']?.[0]?.source_url ||
+                                            '/imagem-padrao.jpg'
+                                        }
+                                        alt={post.title.rendered}
+                                        fill
+                                        className="object-cover rounded-xl"
+                                        sizes="(max-width: 768px) 192px, 192px"
+                                        quality={100}
+                                        priority
+                                    />
+                                </div>
+                                <div className="text-xs font-medium w-[18vw] mx-auto">
+                                    {formatarData(post.date_gmt)} • {post.yoast_head_json.author}
+                                </div>
+                                <div className="w-[18vw] font-semibold text-sm mx-auto">
+                                    <span
+                                        dangerouslySetInnerHTML={{
+                                            __html:
+                                                post.title.rendered.length > 80
+                                                    ? post.title.rendered.substring(0, 80) + '...'
+                                                    : post.title.rendered +
+                                                      (post.title.rendered.length < 80
+                                                          ? '&nbsp;'.repeat(
+                                                                80 - post.title.rendered.length,
+                                                            )
+                                                          : ''),
+                                        }}
+                                    />
+                                </div>
+                                <div className="w-[18vw] mx-auto text-sm font-medium text-justify">
+                                    <span
+                                        dangerouslySetInnerHTML={{
+                                            __html:
+                                                post.excerpt.rendered.length > 95
+                                                    ? post.excerpt.rendered.substring(0, 95) + '...'
+                                                    : post.excerpt.rendered +
+                                                      (post.excerpt.rendered.length < 95
+                                                          ? '</br>'
+                                                          : ''),
+                                        }}
+                                    />
+                                </div>
+                                <div>
+                                    {post.categories.map((category) => (
                                         <span
-                                            dangerouslySetInnerHTML={{
-                                                __html:
-                                                    post.title.rendered.length > 80
-                                                        ? post.title.rendered.substring(0, 80) +
-                                                          '...'
-                                                        : post.title.rendered +
-                                                          (post.title.rendered.length < 80
-                                                              ? '&nbsp;'.repeat(
-                                                                    80 - post.title.rendered.length,
-                                                                )
-                                                              : ''),
-                                            }}
-                                        />
-                                    </div>
-                                    <div className="w-[18vw] mx-auto text-sm font-medium text-justify">
-                                        <span
-                                            dangerouslySetInnerHTML={{
-                                                __html:
-                                                    post.excerpt.rendered.length > 95
-                                                        ? post.excerpt.rendered.substring(0, 95) +
-                                                          '...'
-                                                        : post.excerpt.rendered +
-                                                          (post.excerpt.rendered.length < 95
-                                                              ? '</br>'
-                                                              : ''),
-                                            }}
-                                        />
-                                    </div>
-                                    <div>
-                                        {post.categories.map((category) => (
-                                            <span
-                                                key={category}
-                                                className="text-xs border border-[1.5px] px-3 py-1 rounded-xl font-semibold border-slate-800 text-slate-800"
-                                            >
-                                                {retornarIdCategoria(category)}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </li>
-                            </Link>
+                                            key={category}
+                                            className="text-xs border border-[1.5px] px-3 py-1 rounded-xl font-semibold border-slate-800 text-slate-800"
+                                        >
+                                            {/* {retornarIdCategoria(category)} */}
+                                        </span>
+                                    ))}
+                                </div>
+                            </li>
                         ))}
                     </ul>
 
