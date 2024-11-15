@@ -1,9 +1,7 @@
-'use client';
-
+import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
-import CardPostSkeleton from './CardPostSkeleton';
+import { useState } from 'react';
 
 interface Post {
     id: number;
@@ -13,6 +11,9 @@ interface Post {
     };
     categories: number[];
     yoast_head_json: {
+        og_image: {
+            url: string;
+        }[];
         author: string;
         twitter_misc: {
             'Escrito por': string;
@@ -23,9 +24,6 @@ interface Post {
         rendered: string;
     };
     date_gmt: string;
-    uagb_featured_image_src: {
-        '2048x2048': string;
-    };
     _embedded?: {
         'wp:featuredmedia'?: [
             {
@@ -42,155 +40,123 @@ interface CardPostProps {
 
 const formatarData = (data: string): string => {
     const dataFormatada = new Date(data);
-    const meses = [
-        'jan',
-        'fev',
-        'mar',
-        'abr',
-        'mai',
-        'jun',
-        'jul',
-        'ago',
-        'set',
-        'out',
-        'nov',
-        'dez',
-    ];
+    return dataFormatada.toLocaleDateString('pt-BR', {
+        month: 'short',
+        day: 'numeric',
+        year: '2-digit',
+    });
+};
 
-    const dia = dataFormatada.getDate();
-    const mes = meses[dataFormatada.getMonth()];
-    const ano = dataFormatada.getFullYear();
-
-    return `${dia} ${mes}, ${ano}`;
+const retornarIdCategoria = (id: number): string => {
+    switch (id) {
+        case 10:
+            return 'Destaques';
+        case 8:
+            return 'Dicas';
+        case 17:
+            return 'Novidades';
+        case 9:
+            return 'Promoções';
+        case 7:
+            return 'Review';
+        case 12:
+            return 'Video';
+        default:
+            return 'Categoria desconhecida';
+    }
 };
 
 const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
     const [currentPage, setCurrentPage] = useState(1);
-    const [isLoading, setIsLoading] = useState(true);
-    const totalPages = Math.ceil(posts.length / postsPerPage);
-
-    useEffect(() => {
-        // Simula o carregamento inicial
-        setIsLoading(true);
-        const timer = setTimeout(() => {
-            setIsLoading(false);
-        }, 1000);
-
-        return () => clearTimeout(timer);
-    }, []);
-
-    // Efeito para sincronizar com a URL na inicialização
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            try {
-                const url = new URL(window.location.href);
-                const pageParam = url.searchParams.get('page');
-                if (pageParam) {
-                    const page = parseInt(pageParam);
-                    if (page >= 1 && page <= totalPages) {
-                        setCurrentPage(page);
-                    }
-                }
-            } catch (error) {
-                console.error('Erro ao processar URL:', error);
-            }
-        }
-    }, [totalPages]);
 
     // Calcula o índice inicial e final dos posts para a página atual
     const indexOfLastPost = currentPage * postsPerPage;
     const indexOfFirstPost = indexOfLastPost - postsPerPage;
     const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
 
+    // Calcula o número total de páginas
+    const totalPages = Math.ceil(posts.length / postsPerPage);
+
     // Função para mudar de página
     const paginate = (pageNumber: number) => {
-        setIsLoading(true);
         setCurrentPage(pageNumber);
         window.scrollTo({ top: 0, behavior: 'smooth' });
-
-        // Atualiza a URL com o número da página
-        const url = new URL(window.location.href);
-        url.searchParams.set('page', pageNumber.toString());
-        window.history.pushState({}, '', url);
-
-        // Simula o tempo de carregamento ao mudar de página
-        setTimeout(() => {
-            setIsLoading(false);
-        }, 500);
     };
 
     return (
-        <div className="w-[65vw] mx-auto">
-            {isLoading ? (
-                <ul className="flex-row flex-wrap gap-2 justify-center items-start flex">
-                    {Array.from({ length: postsPerPage }).map((_, index) => (
-                        <CardPostSkeleton key={index} />
-                    ))}
-                </ul>
-            ) : !posts || posts.length === 0 ? (
+        <div className="w-[65vw] mx-auto ">
+            {!posts || posts.length === 0 ? (
                 <p>Nenhum post encontrado</p>
             ) : (
                 <>
                     <ul className="flex-row flex-wrap gap-2 justify-center items-start flex">
                         {currentPosts.map((post) => (
-                            <li className="flex hover:opacity-80 flex-col gap-2 w-[20vw] p-2 rounded mb-4">
-                                <div className="w-[18vw] mx-auto h-[12vw] relative">
-                                    <Image
-                                        src={
-                                            post.uagb_featured_image_src?.['2048x2048'] ||
-                                            post._embedded?.['wp:featuredmedia']?.[0]?.source_url ||
-                                            '/imagem-padrao.jpg'
-                                        }
-                                        alt={post.title.rendered}
-                                        fill
-                                        className="object-cover rounded-xl"
-                                        sizes="(max-width: 768px) 192px, 192px"
-                                        quality={100}
-                                        priority
-                                    />
-                                </div>
-                                <div className="text-xs font-medium w-[18vw] mx-auto">
-                                    {formatarData(post.date_gmt)} • {post.yoast_head_json.author}
-                                </div>
-                                <div className="w-[18vw] font-semibold text-sm mx-auto">
-                                    <span
-                                        dangerouslySetInnerHTML={{
-                                            __html:
-                                                post.title.rendered.length > 80
-                                                    ? post.title.rendered.substring(0, 80) + '...'
-                                                    : post.title.rendered +
-                                                      (post.title.rendered.length < 80
-                                                          ? '&nbsp;'.repeat(
-                                                                80 - post.title.rendered.length,
-                                                            )
-                                                          : ''),
-                                        }}
-                                    />
-                                </div>
-                                <div className="w-[18vw] mx-auto text-sm font-medium text-justify">
-                                    <span
-                                        dangerouslySetInnerHTML={{
-                                            __html:
-                                                post.excerpt.rendered.length > 95
-                                                    ? post.excerpt.rendered.substring(0, 95) + '...'
-                                                    : post.excerpt.rendered +
-                                                      (post.excerpt.rendered.length < 95
-                                                          ? '</br>'
-                                                          : ''),
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    {post.categories.map((category) => (
+                            <Link
+                                key={post.id}
+                                href={`${post.categories
+                                    .map(retornarIdCategoria)
+                                    .join(',')}/articles/${post.slug}`}
+                            >
+                                <li className=" flex flex-col gap-2  w-[20vw] p-2 rounded mb-4">
+                                    {post.yoast_head_json.og_image[0]?.url && (
+                                        <div className="w-[300px] mx-auto h-[200px] relative">
+                                            <Image
+                                                src={post.yoast_head_json.og_image[0].url}
+                                                alt={post.title.rendered}
+                                                fill
+                                                className="object-cover rounded-xl"
+                                                sizes="(max-width: 768px) 192px, 192px"
+                                                priority
+                                            />
+                                        </div>
+                                    )}
+                                    <div className="text-xs font-medium w-[18vw] mx-auto">
+                                        {formatarData(post.date_gmt)} ⋅{' '}
+                                        {post.yoast_head_json.author}
+                                    </div>
+                                    <div className="w-[18vw] font-semibold text-sm mx-auto">
                                         <span
-                                            key={category}
-                                            className="text-xs border border-[1.5px] px-3 py-1 rounded-xl font-semibold border-slate-800 text-slate-800"
-                                        >
-                                            {/* {retornarIdCategoria(category)} */}
-                                        </span>
-                                    ))}
-                                </div>
-                            </li>
+                                            dangerouslySetInnerHTML={{
+                                                __html:
+                                                    post.title.rendered.length > 80
+                                                        ? post.title.rendered.substring(0, 80) +
+                                                          '...'
+                                                        : post.title.rendered +
+                                                          (post.title.rendered.length < 80
+                                                              ? '<br/>' +
+                                                                '&nbsp;'.repeat(
+                                                                    80 - post.title.rendered.length,
+                                                                )
+                                                              : ''),
+                                            }}
+                                        />
+                                    </div>
+                                    <div className="w-[18vw] mx-auto text-sm text-justify">
+                                        <span
+                                            dangerouslySetInnerHTML={{
+                                                __html:
+                                                    post.excerpt.rendered.length > 95
+                                                        ? post.excerpt.rendered.substring(0, 95) +
+                                                          '...'
+                                                        : post.excerpt.rendered +
+                                                          (post.excerpt.rendered.length < 95
+                                                              ? '</br>'
+                                                              : ''),
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        {post.categories.map((category) => (
+                                            <span
+                                                key={category}
+                                                className="text-xs border px-3 py-1 rounded-xl font-semibold border-slate-800 text-slate-800"
+                                            >
+                                                {retornarIdCategoria(category)}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </li>
+                            </Link>
                         ))}
                     </ul>
 
