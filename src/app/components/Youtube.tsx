@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
+import Link from 'next/link';
 
 interface Video {
     id: { videoId: string };
@@ -90,19 +91,21 @@ const YouTubeVideos = () => {
                             key={video.id.videoId}
                             className="flex-[0_0_100%] min-w-0 md:flex-[0_0_50%] lg:flex-[0_0_33.33%] pl-4"
                         >
-                            <div className="border flex rounded-lg p-4 shadow-md mr-4">
-                                <img
-                                    src={video.snippet.thumbnails.high.url}
-                                    alt={video.snippet.title}
-                                    className="w-[15vw] h-[10vw]"
-                                />
-                                <div>
-                                    <h3 className="text-sm font-semibold mb-2">
-                                        {video.snippet.title}
-                                    </h3>
-                                    <p className="text-sm">{video.snippet.description}</p>
+                            <Link target='_blank' href={`https://www.youtube.com/watch?v=${video.id.videoId}`}>
+                                <div className="border flex rounded-lg p-4 shadow-md mr-4">
+                                    <img
+                                        src={video.snippet.thumbnails.high.url}
+                                        alt={video.snippet.title}
+                                        className="w-[15vw] h-[10vw]"
+                                    />
+                                    <div>
+                                        <h3 className="text-sm font-semibold mb-2">
+                                            {video.snippet.title}
+                                        </h3>
+                                        <p className="text-sm">{video.snippet.description}</p>
+                                    </div>
                                 </div>
-                            </div>
+                            </Link>
                         </div>
                     ))}
                 </div>

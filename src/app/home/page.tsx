@@ -80,7 +80,7 @@ const Home = () => {
             )}
 
             <div className="flex flex-col w-full">
-                <Youtube />
+                {/* <Youtube /> */}
                 <CardPost posts={posts} />
                 <Newsletter />
             </div>
