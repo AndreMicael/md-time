@@ -1,6 +1,17 @@
 import { fetchPosts } from '@/app/api/fetchPosts';
 import { useRouter } from 'next/router';
 
+/**
+ * Componente que renderiza um post.
+ *
+ * @param {Object} props - As propriedades do componente.
+ * @param {Object} props.post - O objeto do post a ser renderizado.
+ * @param {Object} props.post.title - O título do post.
+ * @param {Object} props.post.title.rendered - O título renderizado do post.
+ * @param {Object} props.post.content - O conteúdo do post.
+ * @param {Object} props.post.content.rendered - O conteúdo renderizado do post.
+ * @returns {JSX.Element} O componente de post.
+ */
 export default function Post({ post }) {
     const router = useRouter();
 

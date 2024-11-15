@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import Footer from '@/app/components/Footer';
+
 import { fetchPosts } from '@/app/api/fetchPosts';
 import CardPost from '@/app/components/CardPost';
 
@@ -12,6 +12,10 @@ interface Post {
     title: {
         rendered: string;
     };
+    categories: any;
+    yoast_head_json: any;
+    excerpt: any;
+    date_gmt: string;
 }
 
 const Home = () => {
@@ -54,8 +58,9 @@ const Home = () => {
     return (
         <div className="container mx-auto px-4 py-8">
             <h1 className="text-3xl font-bold mb-6">Blog</h1>
-            <CardPost posts={posts} />
-            <Footer />
+            <div className="flex w-full">
+                <CardPost posts={posts} />
+            </div>
         </div>
     );
 };

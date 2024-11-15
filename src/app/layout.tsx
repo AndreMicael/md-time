@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
+import Footer from './components/Footer';
 
 // const geistMono = localFont({
 //     src: './fonts/GeistMonoVF.woff',
@@ -28,7 +29,10 @@ export default function RootLayout({
                     rel="stylesheet"
                 />
             </head>
-            <body>{children}</body>
+            <body>
+                {children}
+                <Footer></Footer>
+            </body>
         </html>
     );
 }
