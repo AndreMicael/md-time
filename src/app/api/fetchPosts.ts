@@ -1,28 +1,60 @@
-export const fetchPosts = async (): Promise<Post[]> => {
+interface Post {
+    id: number;
+    slug: string;
+    title: {
+        rendered: string;
+    };
+    content: {
+        rendered: string;
+    };
+    // ... outros campos necessários
+}
+
+export const fetchPosts = async (categoryId?: string): Promise<Post[]> => {
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+    if (!baseUrl) {
+        throw new Error('URL da API não configurada');
+    }
+
+    const url = categoryId 
+        ? `${baseUrl}/posts?categories=${categoryId}&per_page=100`
+        : `${baseUrl}/posts?per_page=100`;
+    
     try {
-        const response = await fetch('https://mdtime.com.br/wp-json/wp/v2/posts?_embed', {
-            next: { revalidate: 60 },
-        });
-        if (!response.ok) {
-            throw new Error('Falha ao buscar posts');
+        const response = await fetch(url);
+        
+        if (response.status === 404) {
+            console.warn(`Categoria ${categoryId} não encontrada`);
+            return [];
         }
+        
+        if (!response.ok) {
+            throw new Error(`Erro na requisição: ${response.status} - ${response.statusText}`);
+        }
+        
         const posts = await response.json();
-        console.log('Resposta da API:', JSON.stringify(posts, null, 2));
         return posts;
     } catch (error) {
-        console.error('Erro ao buscar posts:', error);
+        console.error('Erro ao buscar posts:', {
+            categoryId,
+            error,
+            url
+        });
         return [];
     }
 };
 
-const API_BASE_URL = 'https://www.mdtime.com.br'; // Substitua pela URL real do seu WordPress
+export async function fetchSinglePost(slug: string): Promise<Post | null> {
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+    if (!baseUrl) {
+        throw new Error('URL da API não configurada');
+    }
 
-export async function fetchSinglePost(slug: string) {
     try {
-        const response = await fetch(`${API_BASE_URL}/wp-json/wp/v2/posts?slug=${slug}`);
+        const response = await fetch(`${baseUrl}/posts?slug=${slug}`);
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`Erro na requisição: ${response.status} - ${response.statusText}`);
         }
 
         const posts = await response.json();
@@ -33,7 +65,7 @@ export async function fetchSinglePost(slug: string) {
         console.error('Erro na fetchSinglePost:', {
             slug,
             error,
-            url: `${API_BASE_URL}/wp-json/wp/v2/posts?slug=${slug}`,
+            url: `${baseUrl}/posts?slug=${slug}`,
         });
         throw error;
     }
