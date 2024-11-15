@@ -9,6 +9,7 @@ const nextConfig = {
                 pathname: '/**',
             },
         ],
+        domains: ['i0.wp.com'],
     },
 }
 
