@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface Video {
     id: { videoId: string };
@@ -66,8 +67,9 @@ const YouTubeVideos = () => {
                 } else {
                     setVideos(data.items || []);
                 }
-            } catch (err) {
-                setError('Erro ao carregar os vídeos');
+            } catch (error: unknown) {
+                console.error('Erro ao carregar vídeo:', error instanceof Error ? error.message : error);
+                setError('Erro ao carregar vídeos');
             } finally {
                 setLoading(false);
             }
@@ -93,9 +95,11 @@ const YouTubeVideos = () => {
                         >
                             <Link target='_blank' href={`https://www.youtube.com/watch?v=${video.id.videoId}`}>
                                 <div className="border flex rounded-lg p-4 shadow-md mr-4">
-                                    <img
+                                    <Image
                                         src={video.snippet.thumbnails.high.url}
                                         alt={video.snippet.title}
+                                        width={240}
+                                        height={160}
                                         className="w-[15vw] h-[10vw]"
                                     />
                                     <div>

@@ -27,8 +27,13 @@ interface Post {
     };
 }
 
+interface ApiError {
+    message: string;
+    status?: number;
+}
+
 export default function CategoryPage({ params }: { params: { category: string } }) {
-    const category = use(params).category;
+    const category = params.category;
 
     const formatarCategoria = (categoria: string) => {
         if (categoria === 'video') {
@@ -59,10 +64,10 @@ export default function CategoryPage({ params }: { params: { category: string } 
                     return;
                 }
 
-                const fetchedPosts = await fetchPosts(categoryId);
+                const fetchedPosts = await fetchPosts(categoryId.toString());
                 console.log('Posts obtidos:', fetchedPosts);
-                setPosts(fetchedPosts);
-            } catch (err) {
+                setPosts(fetchedPosts as unknown as Post[]);
+            } catch (err: unknown) {
                 console.error('Erro detalhado:', err);
                 setError('Erro ao carregar os posts');
             } finally {
