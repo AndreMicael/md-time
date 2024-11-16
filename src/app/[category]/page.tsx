@@ -9,36 +9,14 @@ import { useParams } from 'next/dist/client/components/navigation';
 
 interface Post {
     id: number;
-    slug: string;
     title: {
         rendered: string;
-    };
-    categories: number[];
-    yoast_head_json: {
-        author: string;
-        twitter_misc: {
-            'Escrito por': string;
-            'Est. tempo de leitura': string;
-        };
     };
     excerpt: {
         rendered: string;
     };
-    uagb_featured_image_src: {
-        '2048x2048': [string, number, number, boolean];
-        full: [string, number, number, boolean];
-        large: string;
-        medium: string;
-        thumbnail: string;
-    };
-    date_gmt: string;
-    _embedded?: {
-        'wp:featuredmedia'?: [
-            {
-                source_url: string;
-            },
-        ];
-    };
+    link: string;
+    featured_media: number;
 }
 
 export default function CategoryPage() {

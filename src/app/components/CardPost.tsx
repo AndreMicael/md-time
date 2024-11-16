@@ -97,7 +97,7 @@ const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
                                     .map(retornarIdCategoria)
                                     .join(',')}/articles/${post.slug}`}
                             >
-                                <li className=" flex flex-col gap-2  w-[20vw] p-2 rounded mb-4">
+                                <li className=" hover:opacity-70 flex flex-col gap-2  w-[20vw] p-2 rounded mb-4">
                                     {post.yoast_head_json.og_image[0]?.url && (
                                         <div className="w-[300px] mx-auto h-[200px] relative">
                                             <Image
@@ -118,16 +118,10 @@ const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
                                         <span
                                             dangerouslySetInnerHTML={{
                                                 __html:
-                                                    post.title.rendered.length > 80
-                                                        ? post.title.rendered.substring(0, 80) +
+                                                    post.title.rendered.length > 70
+                                                        ? post.title.rendered.substring(0, 70) +
                                                           '...'
-                                                        : post.title.rendered +
-                                                          (post.title.rendered.length < 80
-                                                              ? '<br/>' +
-                                                                '&nbsp;'.repeat(
-                                                                    80 - post.title.rendered.length,
-                                                                )
-                                                              : ''),
+                                                        : post.title.rendered + ' ',
                                             }}
                                         />
                                     </div>
