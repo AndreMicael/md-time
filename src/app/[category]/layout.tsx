@@ -1,3 +1,4 @@
+import { useParams } from 'next/dist/client/components/navigation';
 import type { Metadata } from 'next/types';
 
 export async function generateMetadata({
@@ -15,8 +16,9 @@ export async function generateMetadata({
 
 export default function CategoryLayout({
     children,
-}: Readonly<{
+}: {
     children: React.ReactNode;
-}>) {
+}) {
+    const params = useParams();
     return <>{children}</>;
 }
