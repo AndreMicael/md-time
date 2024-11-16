@@ -1,14 +1,13 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
 
 import { fetchPosts } from '@/app/api/fetchPosts';
 import CardPost from '@/app/components/CardPost';
 import CardPostSkeleton from '../components/CardPostSkeleton';
 import Newsletter from '../components/Newsletter';
 import SliderSuperior from '../components/SliderSuperior';
-import Youtube from '../components/Youtube';
+// import Youtube from '../components/Youtube';
 
 interface Post {
     id: number;
@@ -32,7 +31,6 @@ interface Post {
 interface YouTubeVideo {
     id: string;
     title: string;
-   
 }
 
 const Home = () => {

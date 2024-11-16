@@ -2,7 +2,7 @@
 
 import CardPost from '../components/CardPost';
 import Navbar from '../components/Navbar';
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import { fetchPosts } from '@/app/api/fetchPosts';
 import { getCategoryId } from '@/app/api/fetchPosts';
 import CardPostSkeleton from '@/app/components/CardPostSkeleton';
