@@ -63,14 +63,78 @@ export default function ArticlePage() {
         getPost();
     }, [slug]);
 
-    if (loading) return <div>Carregando...</div>;
+    if (loading)
+        return (
+            <div className="container mx-auto">
+                <Navbar />
+                <section className="w-[75vw] mx-auto">
+                    <div className="h-8 bg-gray-200 rounded-md w-3/4 mb-6 animate-pulse" />
+
+                    <div className="space-y-4">
+                        <div className="h-4 bg-gray-200 rounded-md w-full animate-pulse" />
+                        <div className="h-4 bg-gray-200 rounded-md w-5/6 animate-pulse" />
+                        <div className="h-4 bg-gray-200 rounded-md w-4/6 animate-pulse" />
+                        <div className="h-4 bg-gray-200 rounded-md w-full animate-pulse" />
+                    </div>
+                    <div className="h-8 bg-gray-200 rounded-md w-3/4 mb-6 animate-pulse" />
+
+                    <div className="space-y-4">
+                        <div className="h-4 bg-gray-200 rounded-md w-full animate-pulse" />
+                        <div className="h-4 bg-gray-200 rounded-md w-5/6 animate-pulse" />
+                        <div className="h-4 bg-gray-200 rounded-md w-4/6 animate-pulse" />
+                        <div className="h-4 bg-gray-200 rounded-md w-full animate-pulse" />
+                    </div>
+                    <div className="h-8 bg-gray-200 rounded-md w-3/4 mb-6 animate-pulse" />
+
+                    <div className="space-y-4">
+                        <div className="h-4 bg-gray-200 rounded-md w-full animate-pulse" />
+                        <div className="h-4 bg-gray-200 rounded-md w-5/6 animate-pulse" />
+                        <div className="h-4 bg-gray-200 rounded-md w-4/6 animate-pulse" />
+                        <div className="h-4 bg-gray-200 rounded-md w-full animate-pulse" />
+                    </div>
+                    <div className="h-8 bg-gray-200 rounded-md w-3/4 mb-6 animate-pulse" />
+
+                    <div className="space-y-4">
+                        <div className="h-4 bg-gray-200 rounded-md w-full animate-pulse" />
+                        <div className="h-4 bg-gray-200 rounded-md w-5/6 animate-pulse" />
+                        <div className="h-4 bg-gray-200 rounded-md w-4/6 animate-pulse" />
+                        <div className="h-4 bg-gray-200 rounded-md w-full animate-pulse" />
+                    </div>
+                    <div className="h-8 bg-gray-200 rounded-md w-3/4 mb-6 animate-pulse" />
+
+                    <div className="space-y-4">
+                        <div className="h-4 bg-gray-200 rounded-md w-full animate-pulse" />
+                        <div className="h-4 bg-gray-200 rounded-md w-5/6 animate-pulse" />
+                        <div className="h-4 bg-gray-200 rounded-md w-4/6 animate-pulse" />
+                        <div className="h-4 bg-gray-200 rounded-md w-full animate-pulse" />
+                    </div>
+                    <div className="h-8 bg-gray-200 rounded-md w-3/4 mb-6 animate-pulse" />
+
+                    <div className="space-y-4">
+                        <div className="h-4 bg-gray-200 rounded-md w-full animate-pulse" />
+                        <div className="h-4 bg-gray-200 rounded-md w-5/6 animate-pulse" />
+                        <div className="h-4 bg-gray-200 rounded-md w-4/6 animate-pulse" />
+                        <div className="h-4 bg-gray-200 rounded-md w-full animate-pulse" />
+                    </div>
+                    <div className="h-8 bg-gray-200 rounded-md w-3/4 mb-6 animate-pulse" />
+
+                    <div className="space-y-4">
+                        <div className="h-4 bg-gray-200 rounded-md w-full animate-pulse" />
+                        <div className="h-4 bg-gray-200 rounded-md w-5/6 animate-pulse" />
+                        <div className="h-4 bg-gray-200 rounded-md w-4/6 animate-pulse" />
+                        <div className="h-4 bg-gray-200 rounded-md w-full animate-pulse" />
+                    </div>
+                </section>
+                <Newsletter />
+            </div>
+        );
     if (error) return <div>{error}</div>;
     if (!post) return <div>Post não encontrado</div>;
 
     return (
         <div className="container mx-auto  ">
             <Navbar />
-            <section className="w-[75vw] mx-auto">
+            <section className="w-[75vw]  mx-auto">
                 <h1
                     className="text-3xl font-bold mb-6"
                     dangerouslySetInnerHTML={{ __html: post.title.rendered }}

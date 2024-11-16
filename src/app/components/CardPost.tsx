@@ -84,12 +84,12 @@ const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
     };
 
     return (
-        <div className="w-[65vw] mx-auto ">
+        <div className=" w-[65vw] h-fit mx-auto flex flex-col items-center align-center justify-center ">
             {!posts || posts.length === 0 ? (
-                <p>Nenhum post encontrado</p>
+                <p className="w-full text-center">Nenhum post encontrado</p>
             ) : (
                 <>
-                    <ul className="flex-row flex-wrap gap-2 justify-center items-start flex">
+                    <ul className="flex flex-row flex-wrap gap-2 justify-start items-start">
                         {currentPosts.map((post) => (
                             <Link
                                 key={post.id}

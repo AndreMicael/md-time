@@ -6,6 +6,7 @@ import { useState, useEffect, use } from 'react';
 import { fetchPosts } from '@/app/api/fetchPosts';
 import { getCategoryId } from '@/app/api/fetchPosts';
 import CardPostSkeleton from '@/app/components/CardPostSkeleton';
+import Newsletter from '../components/Newsletter';
 
 interface Post {
     id: number;
@@ -28,6 +29,20 @@ interface Post {
 
 export default function CategoryPage({ params }: { params: { category: string } }) {
     const category = use(params).category;
+
+    const formatarCategoria = (categoria: string) => {
+        if (categoria === 'video') {
+            return 'Vídeos';
+        } else if (categoria === 'review') {
+            return 'Reviews';
+        } else if (categoria === 'dicas') {
+            return 'Dicas';
+        } else if (categoria === 'promocoes') {
+            return 'Promoções';
+        } else {
+            return 'Início';
+        }
+    };
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -61,7 +76,7 @@ export default function CategoryPage({ params }: { params: { category: string } 
         return (
             <main>
                 <Navbar />
-                <div className="w-full flex justify-center items-center h-[25vw]">
+                <div className="w-full flex justify-center items-center h-screen">
                     <div className="container w-[65vw] mx-auto px-4 py-8">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {[...Array(3)].map((_, index) => (
@@ -91,14 +106,16 @@ export default function CategoryPage({ params }: { params: { category: string } 
         <main>
             <Navbar />
             <div className="w-full">
-                <h1 className="text-center font-bold text-lg">Categoria</h1>
+                <h1 className="text-center font-bold text-lg capitalize">
+                    {category ? formatarCategoria(category) : ''}
+                </h1>
             </div>
             {loading && (
                 <div>
                     {' '}
                     <div className="container w-[65vw] mx-auto px-4 py-8">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {[...Array(6)].map((_, index) => (
+                            {[...Array(3)].map((_, index) => (
                                 <div key={index} className="  rounded-lg p-4 animate-pulse">
                                     <CardPostSkeleton />
                                 </div>
@@ -107,7 +124,15 @@ export default function CategoryPage({ params }: { params: { category: string } 
                     </div>
                 </div>
             )}
-            <CardPost posts={posts} />
+            <div className="   w-full h-full flex flex-col align-center">
+                {' '}
+                <div className=" ">
+                    {' '}
+                    <CardPost posts={posts} />
+                </div>
+            </div>
+
+            <Newsletter />
         </main>
     );
 }

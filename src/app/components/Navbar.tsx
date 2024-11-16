@@ -2,7 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import logo from '@/app/assets/LOGO_MD TIME_SECUNDARIO.png';
 import Links from './Links';
-
+import { FaStore } from 'react-icons/fa';
 const Navbar = () => {
     return (
         <div>
@@ -13,7 +13,12 @@ const Navbar = () => {
                 <div>
                     <Links />
                 </div>
-                <button className="bg-dourado">Loja</button>
+                <button className="px-3 py-1 rounded-lg border border-[1.5px] text-white font-semibold bg-white bg-opacity-0 hover:bg-opacity-40 flex gap-2 justify-center items-center align-center">
+                    <div className=" ">
+                        <FaStore />
+                    </div>
+                    <p className=" ">Loja</p>
+                </button>
             </nav>
         </div>
     );
