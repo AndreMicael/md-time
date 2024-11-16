@@ -109,7 +109,13 @@ const SliderSuperior: React.FC<SliderProps> = ({ post }) => {
                                 }}
                             />
                         </p>
-                        <Link key={post.id} href={`/articles/${post.slug}`}>
+                        <Link
+                            key={post.id}
+                            href={`${post.categories
+                                .map(retornarIdCategoria)
+                                .join(',')
+                                .toLowerCase()}/articles/${post.slug}`}
+                        >
                             <button className="border hover:bg-white hover:bg-opacity-30 transition ease-in-out border-[1.5px] py-1 text-white font-bold rounded-lg px-4 self-start">
                                 Ver Mais
                             </button>
