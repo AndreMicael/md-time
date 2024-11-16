@@ -29,6 +29,12 @@ interface Post {
     };
 }
 
+interface YouTubeVideo {
+    id: string;
+    title: string;
+   
+}
+
 const Home = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
