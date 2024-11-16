@@ -7,7 +7,6 @@ interface Post {
     content: {
         rendered: string;
     };
-   
 }
 
 export const fetchPosts = async (categoryId?: string): Promise<Post[]> => {
@@ -16,29 +15,29 @@ export const fetchPosts = async (categoryId?: string): Promise<Post[]> => {
         throw new Error('URL da API não configurada');
     }
 
-    const url = categoryId 
+    const url = categoryId
         ? `${baseUrl}/posts?categories=${categoryId}&per_page=100`
         : `${baseUrl}/posts?per_page=100`;
-    
+
     try {
         const response = await fetch(url);
-        
+
         if (response.status === 404) {
             console.warn(`Categoria ${categoryId} não encontrada`);
             return [];
         }
-        
+
         if (!response.ok) {
             throw new Error(`Erro na requisição: ${response.status} - ${response.statusText}`);
         }
-        
+
         const posts = await response.json();
         return posts;
     } catch (error) {
         console.error('Erro ao buscar posts:', {
             categoryId,
             error,
-            url
+            url,
         });
         return [];
     }
@@ -73,15 +72,14 @@ export async function fetchSinglePost(slug: string): Promise<Post | null> {
 
 export const getCategoryId = (categoryName: string): number | undefined => {
     const categoryMap: { [key: string]: number } = {
-        'destaques': 10,
-        'dicas': 8,
-        'novidades': 17,
-        'promocoes': 9,
-        'review': 7,
-        'video': 12
+        destaques: 10,
+        dicas: 8,
+        novidades: 17,
+        promocoes: 9,
+        review: 7,
+        video: 12,
     };
 
-    // Normaliza o nome da categoria (remove acentos e converte para minúsculas)
     const normalizedName = categoryName
         .toLowerCase()
         .normalize('NFD')

@@ -2,9 +2,10 @@
 
 import CardPost from '../components/CardPost';
 import Navbar from '../components/Navbar';
-import { useState, useEffect , use} from 'react';
+import { useState, useEffect, use } from 'react';
 import { fetchPosts } from '@/app/api/fetchPosts';
 import { getCategoryId } from '@/app/api/fetchPosts';
+import CardPostSkeleton from '@/app/components/CardPostSkeleton';
 
 interface Post {
     id: number;
@@ -37,12 +38,12 @@ export default function CategoryPage({ params }: { params: { category: string } 
             try {
                 const categoryId = await getCategoryId(category);
                 console.log('CategoryId obtido:', categoryId);
-                
+
                 if (!categoryId) {
                     setError('Categoria não encontrada');
                     return;
                 }
-                
+
                 const fetchedPosts = await fetchPosts(categoryId);
                 console.log('Posts obtidos:', fetchedPosts);
                 setPosts(fetchedPosts);
@@ -61,7 +62,15 @@ export default function CategoryPage({ params }: { params: { category: string } 
             <main>
                 <Navbar />
                 <div className="w-full flex justify-center items-center h-[25vw]">
-                    Carregando...
+                    <div className="container w-[65vw] mx-auto px-4 py-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {[...Array(3)].map((_, index) => (
+                                <div key={index} className="  rounded-lg p-4 animate-pulse">
+                                    <CardPostSkeleton />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </main>
         );
@@ -84,6 +93,20 @@ export default function CategoryPage({ params }: { params: { category: string } 
             <div className="w-full">
                 <h1 className="text-center font-bold text-lg">Categoria</h1>
             </div>
+            {loading && (
+                <div>
+                    {' '}
+                    <div className="container w-[65vw] mx-auto px-4 py-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {[...Array(6)].map((_, index) => (
+                                <div key={index} className="  rounded-lg p-4 animate-pulse">
+                                    <CardPostSkeleton />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
             <CardPost posts={posts} />
         </main>
     );

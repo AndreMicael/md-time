@@ -95,7 +95,8 @@ const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
                                 key={post.id}
                                 href={`${post.categories
                                     .map(retornarIdCategoria)
-                                    .join(',')}/articles/${post.slug}`}
+                                    .join(',')
+                                    .toLowerCase()}/articles/${post.slug}`}
                             >
                                 <li className=" hover:opacity-70 flex flex-col gap-2  w-[20vw] p-2 rounded mb-4">
                                     {post.yoast_head_json.og_image[0]?.url && (
