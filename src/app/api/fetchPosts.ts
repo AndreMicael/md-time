@@ -7,7 +7,7 @@ interface Post {
     content: {
         rendered: string;
     };
-    // ... outros campos necessários
+   
 }
 
 export const fetchPosts = async (categoryId?: string): Promise<Post[]> => {
@@ -70,3 +70,22 @@ export async function fetchSinglePost(slug: string): Promise<Post | null> {
         throw error;
     }
 }
+
+export const getCategoryId = (categoryName: string): number | undefined => {
+    const categoryMap: { [key: string]: number } = {
+        'destaques': 10,
+        'dicas': 8,
+        'novidades': 17,
+        'promocoes': 9,
+        'review': 7,
+        'video': 12
+    };
+
+    // Normaliza o nome da categoria (remove acentos e converte para minúsculas)
+    const normalizedName = categoryName
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+
+    return categoryMap[normalizedName];
+};
