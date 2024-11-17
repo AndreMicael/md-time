@@ -9,9 +9,10 @@ type PageProps = {
         category: string;
         slug: string;
     };
+    searchParams?: { [key: string]: string | string[] | undefined };
 }
 
-export default function ArticlePage({ params }: PageProps) {
+export default async function ArticlePage({ params }: PageProps) {
     return (
         <div className="container mx-auto">
             <Navbar />
