@@ -2,22 +2,10 @@
 
 import React, { use, useEffect, useState } from 'react';
 import { fetchSinglePost } from '@/app/api/fetchPosts';
+import { Post } from '@/app/types/post';
+ 
 
-interface Post {
-    title: {
-        rendered: string;
-    };
-    content: {
-        rendered: string;
-    };
-}
-
-interface ArticleContentProps {
-    category: string;
-    slug: string;
-}
-
-export default function ArticleContent({ category, slug }: ArticleContentProps) {
+export default function ArticleContent({ slug }: { slug: string }) {
     const [post, setPost] = useState<Post | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);

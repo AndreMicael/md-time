@@ -4,20 +4,14 @@ import ArticleContent from './ArticleContent';
 import Newsletter from '@/app/components/Newsletter';
 import Navbar from '@/app/components/Navbar';
 
-type PageProps = {
-    params: {
-        category: string;
-        slug: string;
-    };
-    searchParams?: { [key: string]: string | string[] | undefined };
-}
+ 
 
-export default async function ArticlePage({ params }: PageProps) {
+export default async function ArticlePage( {params } : {params: {slug: string}} ) { 
     return (
         <div className="container mx-auto">
             <Navbar />
             <Suspense fallback={<LoadingArticle />}>
-                <ArticleContent category={params.category} slug={params.slug} />
+                <ArticleContent slug={params.slug} />
             </Suspense>
             <Newsletter />
         </div>
