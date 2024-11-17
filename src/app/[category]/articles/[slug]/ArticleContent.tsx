@@ -1,10 +1,9 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import { fetchSinglePost } from '@/app/api/fetchPosts';
 
 interface Post {
-    id: number;
     title: {
         rendered: string;
     };
@@ -13,7 +12,11 @@ interface Post {
     };
 }
 
-export default function ArticleContent({ slug }: { slug: string }) {
+interface ArticleContentProps {
+    slug: string;
+}
+
+export default function ArticleContent({ slug }: ArticleContentProps) {
     const [post, setPost] = useState<Post | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -21,7 +24,7 @@ export default function ArticleContent({ slug }: { slug: string }) {
     useEffect(() => {
         const getPost = async () => {
             try {
-                const fetchedPost = await fetchSinglePost(slug as string);
+                const fetchedPost = await fetchSinglePost(slug);
                 if (fetchedPost) {
                     setPost(fetchedPost);
                 } else {
@@ -33,7 +36,7 @@ export default function ArticleContent({ slug }: { slug: string }) {
 
                 console.error('Detalhes do erro:', {
                     message: errorMessage,
-                    slug,
+                    slug: slug,
                     error: err,
                     tipo: 'Erro de parsing JSON - A API retornou HTML ao invés de JSON',
                 });
@@ -63,14 +66,6 @@ export default function ArticleContent({ slug }: { slug: string }) {
         return (
             <div className="container mx-auto">
                 <section className="w-[75vw] mx-auto">
-                    <div className="h-8 bg-gray-200 rounded-md w-3/4 mb-6 animate-pulse" />
-
-                    <div className="space-y-4">
-                        <div className="h-4 bg-gray-200 rounded-md w-full animate-pulse" />
-                        <div className="h-4 bg-gray-200 rounded-md w-5/6 animate-pulse" />
-                        <div className="h-4 bg-gray-200 rounded-md w-4/6 animate-pulse" />
-                        <div className="h-4 bg-gray-200 rounded-md w-full animate-pulse" />
-                    </div>
                     <div className="h-8 bg-gray-200 rounded-md w-3/4 mb-6 animate-pulse" />
 
                     <div className="space-y-4">

@@ -18,7 +18,9 @@ interface Post {
     };
     categories: any;
     yoast_head_json: any;
-    excerpt: any;
+    excerpt: {
+        rendered: string;
+    };
     date_gmt: string;
     uagb_featured_image_src: {
         '2048x2048': [string, number, number, boolean];
@@ -80,10 +82,7 @@ const Home = () => {
 
     return (
         <div className="container mx-auto">
-            <Navbar />
-            {posts.length > 0 && posts[0].uagb_featured_image_src?.['2048x2048'] && (
-                <SliderSuperior post={posts[0]} />
-            )}
+            <SliderSuperior post={posts[1]} />
 
             <div className="flex flex-col w-full">
                 {/* <Youtube /> */}
