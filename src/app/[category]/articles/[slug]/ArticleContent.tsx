@@ -13,10 +13,11 @@ interface Post {
 }
 
 interface ArticleContentProps {
+    category: string;
     slug: string;
 }
 
-export default function ArticleContent({ slug }: ArticleContentProps) {
+export default function ArticleContent({ category, slug }: ArticleContentProps) {
     const [post, setPost] = useState<Post | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);

@@ -16,7 +16,7 @@ export default function ArticlePage({ params }: PageProps) {
         <div className="container mx-auto">
             <Navbar />
             <Suspense fallback={<LoadingArticle />}>
-                <ArticleContent slug={params.slug} />
+                <ArticleContent category={params.category} slug={params.slug} />
             </Suspense>
             <Newsletter />
         </div>
