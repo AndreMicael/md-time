@@ -1,4 +1,3 @@
-import { useParams } from 'next/dist/client/components/navigation';
 import { Metadata } from 'next';
 import Navbar from '../components/Navbar';
 import Newsletter from '../components/Newsletter';
@@ -17,11 +16,5 @@ export async function generateMetadata({
 }
 
 export default function CategoryLayout({ children }: { children: React.ReactNode }) {
-    return (
-        <>
-            <Navbar />
-            {children}
-            <Newsletter />
-        </>
-    );
+    return <>{children}</>;
 }
