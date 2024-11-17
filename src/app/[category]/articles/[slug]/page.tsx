@@ -4,7 +4,7 @@ import ArticleContent from './ArticleContent';
 import Newsletter from '@/app/components/Newsletter';
 import Navbar from '@/app/components/Navbar';
 
-export default function ArticlePage({ params }: { params: { slug: string } }) {
+export default function ArticlePage({ params }: { params: { category: string; slug: string } }) {
     return (
         <div className="container mx-auto">
             <Navbar />
