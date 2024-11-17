@@ -4,7 +4,14 @@ import ArticleContent from './ArticleContent';
 import Newsletter from '@/app/components/Newsletter';
 import Navbar from '@/app/components/Navbar';
 
-export default function ArticlePage({ params }: { params: { category: string; slug: string } }) {
+type PageProps = {
+    params: {
+        category: string;
+        slug: string;
+    };
+}
+
+export default function ArticlePage({ params }: PageProps) {
     return (
         <div className="container mx-auto">
             <Navbar />
