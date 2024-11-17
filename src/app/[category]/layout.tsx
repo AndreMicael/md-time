@@ -14,11 +14,6 @@ export async function generateMetadata({
     };
 }
 
-export default function CategoryLayout({
-    children,
-}: {
-    children: React.ReactNode;
-}) {
-    const params = useParams();
+export default function CategoryLayout({ children }: { children: React.ReactNode }) {
     return <>{children}</>;
 }

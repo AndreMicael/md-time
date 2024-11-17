@@ -99,18 +99,20 @@ const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
                                     .toLowerCase()}/articles/${post.slug}`}
                             >
                                 <li className=" hover:opacity-70 flex flex-col gap-2  w-[20vw] p-2 rounded mb-4">
-                                    {post.yoast_head_json.og_image[0]?.url && (
-                                        <div className="w-[300px] mx-auto h-[200px] relative">
-                                            <Image
-                                                src={post.yoast_head_json.og_image[0].url}
-                                                alt={post.title.rendered}
-                                                fill
-                                                className="object-cover rounded-xl"
-                                                sizes="(max-width: 768px) 192px, 192px"
-                                                priority
-                                            />
-                                        </div>
-                                    )}
+                                    {post.yoast_head_json.og_image &&
+                                        post.yoast_head_json.og_image.length > 0 &&
+                                        post.yoast_head_json.og_image[0].url && (
+                                            <div className="w-[300px] mx-auto h-[200px] relative">
+                                                <Image
+                                                    src={post.yoast_head_json.og_image[0].url}
+                                                    alt={post.title.rendered}
+                                                    fill
+                                                    className="object-cover rounded-xl"
+                                                    sizes="(max-width: 768px) 192px, 192px"
+                                                    priority
+                                                />
+                                            </div>
+                                        )}
                                     <div className="text-xs font-medium w-[18vw] mx-auto">
                                         {formatarData(post.date_gmt)} ⋅{' '}
                                         {post.yoast_head_json.author}
