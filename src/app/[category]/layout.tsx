@@ -13,10 +13,6 @@ export async function generateMetadata({
     };
 }
 
-export default function CategoryLayout({
-    children,
-}: Readonly<{
-    children: React.ReactNode;
-}>) {
+export default function CategoryLayout({ children }: { children: React.ReactNode }) {
     return <>{children}</>;
 }
