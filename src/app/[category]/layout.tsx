@@ -16,5 +16,11 @@ export async function generateMetadata({
 }
 
 export default function CategoryLayout({ children }: { children: React.ReactNode }) {
-    return <>{children}</>;
+    return (
+        <>
+            <Navbar></Navbar>
+            {children}
+            <Newsletter></Newsletter>
+        </>
+    );
 }
