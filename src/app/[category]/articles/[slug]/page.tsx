@@ -9,11 +9,11 @@ import Navbar from '@/app/components/Navbar';
 export default async function ArticlePage( {params } : {params: {slug: string}} ) { 
     return (
         <div className="container mx-auto">
-            <Navbar />
+        
             <Suspense fallback={<LoadingArticle />}>
                 <ArticleContent slug={params.slug} />
             </Suspense>
-            <Newsletter />
+       
         </div>
     );
 }

@@ -8,9 +8,26 @@ const nextConfig = {
                 port: '',
                 pathname: '/**',
             },
+            {
+                protocol: 'https',
+                hostname: 'i0.wp.com',
+                port: '',
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'i.ytimg.com',
+                port: '',
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'img.youtube.com',
+                port: '',
+                pathname: '/**',
+            },
         ],
-        domains: ['i0.wp.com', 'i.ytimg.com', 'img.youtube.com'],
     },
 }
 
-module.exports = nextConfig 
+module.exports = nextConfig;

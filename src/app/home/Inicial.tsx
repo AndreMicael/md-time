@@ -8,7 +8,6 @@ import CardPostSkeleton from '../components/CardPostSkeleton';
 import Newsletter from '../components/Newsletter';
 import SliderSuperior from '../components/SliderSuperior';
 import Navbar from '../components/Navbar';
-// import Youtube from '../components/Youtube';
 
 interface Post {
     id: number;
@@ -63,7 +62,7 @@ const Home = () => {
             <div className="container w-[65vw] mx-auto px-4 py-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {[...Array(6)].map((_, index) => (
-                        <div key={index} className="  rounded-lg p-4 animate-pulse">
+                        <div key={index} className="rounded-lg p-4 animate-pulse">
                             <CardPostSkeleton />
                         </div>
                     ))}
@@ -82,10 +81,9 @@ const Home = () => {
 
     return (
         <div className="container mx-auto">
-            <SliderSuperior post={posts[1]} />
+            <SliderSuperior slug="lancamento-exclusivo-orient-stock-car-speedtech-mbttc018-f49tt037-e-yn8tt006" posts={posts} />
 
             <div className="flex flex-col w-full">
-                {/* <Youtube /> */}
                 <CardPost posts={posts} />
                 <Newsletter />
             </div>
