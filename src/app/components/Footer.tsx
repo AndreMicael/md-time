@@ -19,21 +19,24 @@ const Footer = () => {
                 <nav>
                     <div className="grid grid-flow-col gap-4">
                         <a
-                            href="#"
+                            href="https://www.instagram.com/marciodesigneroficial/"
+                            target='_blank'
                             className="flex items-center gap-2 hover:text-azul transition-colors"
                         >
                             <FaInstagram />
                             Instagram
                         </a>
                         <a
-                            href="#"
+                            href="https://www.youtube.com/@CanalMDTime"
+                            target='_blank'
                             className="flex items-center gap-2 hover:text-azul transition-colors"
                         >
                             <IoLogoYoutube />
                             YouTube
                         </a>
                         <a
-                            href="#"
+                            href="http://www.marciodesigner.com.br/"
+                            target='_blank'
                             className="flex items-center gap-2 hover:text-azul transition-colors"
                         >
                             <FaStore />

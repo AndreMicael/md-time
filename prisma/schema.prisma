@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Entidade para posts do WordPress
+model WordPressPost {
+  id        Int      @id
+  slug      String   @unique
+  title     String
+  content   String   @db.Text
+  excerpt   String?  @db.Text
+  authorName String?
+  publishedAt DateTime
+  categories String[] // Array de categorias
+  featuredImage String?
+  readingTime String?
+  updatedAt  DateTime @updatedAt
+  createdAt  DateTime @default(now())
+
+  @@map("wordpress_posts")
+}
+
+// Entidade para vídeos do YouTube
+model YouTubeVideo {
+  id          String   @id // ID do vídeo do YouTube
+  title       String
+  description String?  @db.Text
+  thumbnailUrl String
+  publishedAt DateTime
+  videoUrl    String
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+
+  @@map("youtube_videos")
+}

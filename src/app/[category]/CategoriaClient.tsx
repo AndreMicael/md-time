@@ -1,7 +1,8 @@
 'use client';
 
 import CardPost from '../components/CardPost';
-import { Post } from '@/app/types/post'; // Mova a interface Post para um arquivo separado
+import { Post } from '@/app/types/interfaces';
+import { CategoryNames } from '@/app/constants/categories';
 
 interface CategoriaClientProps {
     posts: Post[];
@@ -10,17 +11,8 @@ interface CategoriaClientProps {
 
 export default function CategoriaClient({ posts, category }: CategoriaClientProps) {
     const formatarCategoria = (categoria: string) => {
-        if (categoria === 'video') {
-            return 'Vídeos';
-        } else if (categoria === 'review') {
-            return 'Reviews';
-        } else if (categoria === 'dicas') {
-            return 'Dicas';
-        } else if (categoria === 'promocoes') {
-            return 'Promoções';
-        } else {
-            return 'Início';
-        }
+        const normalizedCategory = categoria.toLowerCase() as unknown as keyof typeof CategoryNames;
+        return CategoryNames[normalizedCategory] || 'Início';
     };
 
     return (

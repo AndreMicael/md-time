@@ -13,12 +13,15 @@ const Navbar = () => {
                 <div>
                     <Links />
                 </div>
+                <a href="https://marciodesigner.com.br/"
+                target="_blank">
                 <button className="px-3 py-1 rounded-lg  border-[1.5px] text-white font-semibold bg-white bg-opacity-0 hover:bg-opacity-40 flex gap-2 justify-center items-center align-center">
                     <div className=" ">
                         <FaStore />
                     </div>
                     <p className=" ">Loja</p>
                 </button>
+                </a>
             </nav>
         </div>
     );

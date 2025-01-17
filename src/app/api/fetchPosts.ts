@@ -1,89 +1,58 @@
-interface Post {
-    id: number;
-    slug: string;
-    title: {
-        rendered: string;
-    };
-    content: {
-        rendered: string;
-    };
-}
+import { Post } from '../types/interfaces';
+import { CategoryId } from '../constants/categories';
+import prisma from '@/app/lib/prisma';
 
 export const fetchPosts = async (categoryId?: string): Promise<Post[]> => {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-    if (!baseUrl) {
-        throw new Error('URL da API não configurada');
-    }
-
-    const url = categoryId
-        ? `${baseUrl}/posts?categories=${categoryId}&per_page=100`
-        : `${baseUrl}/posts?per_page=100`;
-
     try {
+        const url = categoryId 
+            ? `/api/posts?categoryId=${categoryId}`
+            : '/api/posts';
+            
         const response = await fetch(url);
-
-        if (response.status === 404) {
-            console.warn(`Categoria ${categoryId} não encontrada`);
-            return [];
-        }
-
+        
         if (!response.ok) {
-            throw new Error(`Erro na requisição: ${response.status} - ${response.statusText}`);
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-
+        
         const posts = await response.json();
         return posts;
     } catch (error) {
-        console.error('Erro ao buscar posts:', {
-            categoryId,
-            error,
-            url,
-        });
+        console.error('Erro ao buscar posts:', error);
         return [];
     }
 };
 
-export async function fetchSinglePost(slug: string): Promise<Post | null> {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-    if (!baseUrl) {
-        throw new Error('URL da API não configurada');
-    }
-
-    try {
-        const response = await fetch(`${baseUrl}/posts?slug=${slug}`);
-
-        if (!response.ok) {
-            throw new Error(`Erro na requisição: ${response.status} - ${response.statusText}`);
-        }
-
-        const posts = await response.json();
-
-        // A API retorna um array, mesmo para um único post
-        return posts.length > 0 ? posts[0] : null;
-    } catch (error) {
-        console.error('Erro na fetchSinglePost:', {
-            slug,
-            error,
-            url: `${baseUrl}/posts?slug=${slug}`,
-        });
-        throw error;
-    }
-}
-
 export const getCategoryId = (categoryName: string): number | undefined => {
-    const categoryMap: { [key: string]: number } = {
-        destaques: 10,
-        dicas: 8,
-        novidades: 17,
-        promocoes: 9,
-        review: 7,
-        video: 12,
-    };
-
     const normalizedName = categoryName
         .toLowerCase()
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '');
 
-    return categoryMap[normalizedName];
+    const categoryMap = {
+        destaques: CategoryId.DESTAQUES,
+        dicas: CategoryId.DICAS,
+        novidades: CategoryId.NOVIDADES,
+        promocoes: CategoryId.PROMOCOES,
+        review: CategoryId.REVIEW,
+        video: CategoryId.VIDEO,
+    };
+
+    return categoryMap[normalizedName as keyof typeof categoryMap];
 };
+
+export async function fetchSinglePost(slug: string): Promise<Post | null> {
+    try {
+        const response = await fetch(`/api/posts/${slug}`);
+        
+        if (!response.ok) {
+            if (response.status === 404) return null;
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const post = await response.json();
+        return post;
+    } catch (error) {
+        console.error('Erro na fetchSinglePost:', error);
+        throw error;
+    }
+}

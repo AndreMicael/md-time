@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { fetchSinglePost } from '@/app/api/fetchPosts';
-import { Post } from '@/app/types/post';
+import { Post } from '@/app/types/interfaces';
  
 
 export default function ArticleContent({ slug }: { slug: string }) {
@@ -55,14 +55,6 @@ export default function ArticleContent({ slug }: { slug: string }) {
         return (
             <div className="container mx-auto">
                 <section className="w-[75vw] mx-auto">
-                    <div className="h-8 bg-gray-200 rounded-md w-3/4 mb-6 animate-pulse" />
-
-                    <div className="space-y-4">
-                        <div className="h-4 bg-gray-200 rounded-md w-full animate-pulse" />
-                        <div className="h-4 bg-gray-200 rounded-md w-5/6 animate-pulse" />
-                        <div className="h-4 bg-gray-200 rounded-md w-4/6 animate-pulse" />
-                        <div className="h-4 bg-gray-200 rounded-md w-full animate-pulse" />
-                    </div>
                     <div className="h-8 bg-gray-200 rounded-md w-3/4 mb-6 animate-pulse" />
 
                     <div className="space-y-4">

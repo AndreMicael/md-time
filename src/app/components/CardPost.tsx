@@ -6,31 +6,19 @@ import { useState } from 'react';
 interface Post {
     id: number;
     slug: string;
-    title: {
-        rendered: string;
+    title: string;
+    content: string;
+    author: {
+        name: string;
     };
-    categories: number[];
-    yoast_head_json: {
-        og_image: {
-            url: string;
-        }[];
-        author: string;
-        twitter_misc: {
-            'Escrito por': string;
-            'Est. tempo de leitura': string;
-        };
-    };
-    excerpt: {
-        rendered: string;
-    };
-    date_gmt: string;
-    _embedded?: {
-        'wp:featuredmedia'?: [
-            {
-                source_url: string;
-            },
-        ];
-    };
+    publishedAt: string;
+    categories: {
+        name: string;
+    }[];
+    featuredImage: string | null;
+    readingTime: string;
+    updatedAt: string;
+    createdAt: string;
 }
 
 interface CardPostProps {
@@ -66,6 +54,12 @@ const retornarIdCategoria = (id: number): string => {
     }
 };
 
+const stripHtml = (html: string): string => {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
+};
+
 const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -84,7 +78,7 @@ const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
     };
 
     return (
-        <div className=" w-[65vw] h-fit mx-auto flex flex-col items-center align-center justify-center ">
+        <div className="w-[65vw] h-fit mx-auto flex flex-col items-center align-center justify-center">
             {!posts || posts.length === 0 ? (
                 <p className="w-full text-center">Nenhum post encontrado</p>
             ) : (
@@ -94,21 +88,15 @@ const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
                             <Link
                                 key={post.id}
                                 href={`${post.categories
-                                    .map(retornarIdCategoria)
+                                    .map(cat => retornarIdCategoria(Number(cat.name)))
                                     .join(',')
                                     .toLowerCase()}/articles/${post.slug}`}
                             >
-                                <li className=" hover:opacity-70 flex flex-col gap-2  w-[20vw] p-2 rounded mb-4">
+                                <li className="hover:opacity-70 flex flex-col gap-2 w-[20vw] p-2 rounded mb-4">
                                     <div className="w-[300px] mx-auto h-[200px] relative">
                                         <Image
-                                            src={
-                                                post._embedded?.['wp:featuredmedia']?.[0]
-                                                    ?.source_url ||
-                                                (post.yoast_head_json.og_image &&
-                                                    post.yoast_head_json.og_image[0]?.url) ||
-                                                '/images/default-post.jpg'
-                                            }
-                                            alt={post.title.rendered}
+                                            src={post.featuredImage || '/images/default-post.jpg'}
+                                            alt={post.title}
                                             fill
                                             sizes="(max-width: 300px) 100vw, 300px"
                                             className="object-cover rounded-xl"
@@ -116,41 +104,25 @@ const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
                                         />
                                     </div>
                                     <div className="text-xs font-medium w-[18vw] mx-auto">
-                                        {formatarData(post.date_gmt)} ⋅{' '}
-                                        {post.yoast_head_json.author}
+                                        {formatarData(post.publishedAt)} ⋅ {post.author.name}
                                     </div>
                                     <div className="w-[18vw] font-semibold text-sm mx-auto">
-                                        <span
-                                            dangerouslySetInnerHTML={{
-                                                __html:
-                                                    post.title.rendered.length > 70
-                                                        ? post.title.rendered.substring(0, 70) +
-                                                          '...'
-                                                        : post.title.rendered + ' ',
-                                            }}
-                                        />
+                                        {post.title.length > 70
+                                            ? post.title.substring(0, 70) + '...'
+                                            : post.title}
                                     </div>
                                     <div className="w-[18vw] mx-auto text-sm text-justify">
-                                        <span
-                                            dangerouslySetInnerHTML={{
-                                                __html:
-                                                    post.excerpt.rendered.length > 95
-                                                        ? post.excerpt.rendered.substring(0, 95) +
-                                                          '...'
-                                                        : post.excerpt.rendered +
-                                                          (post.excerpt.rendered.length < 95
-                                                              ? '</br>'
-                                                              : ''),
-                                            }}
-                                        />
+                                        {stripHtml(post.content).length > 95
+                                            ? stripHtml(post.content).substring(0, 95) + '...'
+                                            : stripHtml(post.content)}
                                     </div>
                                     <div>
-                                        {post.categories.map((category) => (
+                                        {post.categories.map((category, index) => (
                                             <span
-                                                key={category}
+                                                key={index}
                                                 className="text-xs border px-3 py-1 rounded-xl font-semibold border-slate-800 text-slate-800"
                                             >
-                                                {retornarIdCategoria(category)}
+                                                {retornarIdCategoria(Number(category.name))}
                                             </span>
                                         ))}
                                     </div>
