@@ -7,8 +7,15 @@ import { useState, useEffect } from 'react';
 interface Post {
     id: string;
     slug: string;
-    title: string;
-    content: string;
+    title: {
+        rendered: string;
+    };
+    content: {
+        rendered: string;
+    };
+    excerpt?: {
+        rendered: string;
+    };
     publishedAt: string;
     author?: {
         name: string;
@@ -18,9 +25,6 @@ interface Post {
     categories: Array<{
         name: string;
     }>;
-    excerpt?: {
-        rendered: string;
-    };
 }
 
 interface SliderProps {

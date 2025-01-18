@@ -14,7 +14,7 @@ model wordPressPost {
   content               String   @db.Text
   excerpt               String?  @db.Text
   author_name           String?
-  published_at          DateTime
+  published_at          DateTime?
   categories            String[]
   featured_image        String?
   featured_image_sizes  String?

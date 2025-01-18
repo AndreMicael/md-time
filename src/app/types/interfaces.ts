@@ -53,3 +53,23 @@ interface ImageSize {
     source_url: string;
     filesize?: number;
 }
+
+export function formatImageSizes(uagbFeaturedImageSrc: any) {
+    const sizes: Record<string, ImageSize> = {};
+    
+    Object.entries(uagbFeaturedImageSrc).forEach(([key, value]: [string, any]) => {
+        if (value && typeof value === 'object') {
+            sizes[key] = {
+                file: value.file,
+                width: value.width,
+                height: value.height,
+                sources: value.sources,
+                mime_type: value.mime_type,
+                source_url: value.source_url,
+                filesize: value.filesize
+            };
+        }
+    });
+    
+    return sizes;
+}

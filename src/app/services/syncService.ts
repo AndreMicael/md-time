@@ -22,6 +22,16 @@ export class SyncService {
                 
                 console.log(`Sincronizando post: ${post.id} - ${post.title.rendered}`);
                 
+                const publishedAt = new Date(post.datePublished || post.date_gmt);
+                const validPublishedAt = isNaN(publishedAt.getTime()) ? null : publishedAt;
+                
+                // Armazenar a data original como string, mesmo se for inválida
+                const originalPublishedAt = post.datePublished || post.date_gmt;
+                
+                if (!validPublishedAt) {
+                    console.warn(`Post ID ${post.id} tem uma data de publicação inválida. Armazenando a data original.`);
+                }
+                
                 const result = await prisma.wordPressPost.upsert({
                     where: { id: post.id },
                     update: {
@@ -29,7 +39,8 @@ export class SyncService {
                         content: post.content.rendered,
                         excerpt: post.excerpt?.rendered,
                         author_name: post.yoast_head_json?.author,
-                        published_at: new Date(post.date_gmt),
+                        published_at: validPublishedAt,
+                        original_published_at: originalPublishedAt, // Armazenar a data original
                         categories: post.categories.map(String),
                         reading_time: post.yoast_head_json?.twitter_misc?.['Est. tempo de leitura'],
                         featured_image: featuredMediaUrl,
@@ -43,7 +54,7 @@ export class SyncService {
                         content: post.content.rendered,
                         excerpt: post.excerpt?.rendered,
                         author_name: post.yoast_head_json?.author,
-                        published_at: new Date(post.date_gmt),
+                        published_at: validPublishedAt,
                         categories: post.categories.map(String),
                         reading_time: post.yoast_head_json?.twitter_misc?.['Est. tempo de leitura'],
                         featured_image: featuredMediaUrl,
@@ -89,7 +100,7 @@ export class SyncService {
                         title: item.snippet.title,
                         description: item.snippet.description,
                         thumbnailUrl: item.snippet.thumbnails.high.url,
-                        publishedAt: new Date(item.snippet.publishedAt),
+                        publishedAt: typeof item.snippet.publishedAt === 'string' ? item.snippet.publishedAt : new Date(item.snippet.publishedAt).toISOString() || null,
                         videoUrl: `https://www.youtube.com/watch?v=${item.id.videoId}`,
                     },
                     create: {
@@ -97,7 +108,7 @@ export class SyncService {
                         title: item.snippet.title,
                         description: item.snippet.description,
                         thumbnailUrl: item.snippet.thumbnails.high.url,
-                        publishedAt: new Date(item.snippet.publishedAt),
+                        publishedAt: typeof item.snippet.publishedAt === 'string' ? item.snippet.publishedAt : new Date(item.snippet.publishedAt).toISOString() || null,
                         videoUrl: `https://www.youtube.com/watch?v=${item.id.videoId}`,
                     },
                 });
@@ -141,7 +152,7 @@ export class SyncService {
                         content: post.content.rendered,
                         excerpt: post.excerpt?.rendered || '',
                         author_name: post.yoast_head_json?.author || '',
-                        published_at: new Date(post.date_gmt),
+                        published_at: new Date(post.date_gmt) || null,
                         categories: post.categories.map(String),
                         reading_time: post.yoast_head_json?.twitter_misc?.['Est. tempo de leitura'] || '',
                         featured_image: post._embedded?.['wp:featuredmedia']?.[0]?.source_url || null,
