@@ -29,7 +29,7 @@ export async function GET(
                 name: post.authorName || 'Autor Desconhecido'
             },
             publishedAt: post.publishedAt,
-            categories: post.categories.map(category => ({ name: category })),
+            categories: post.categories.map((category: string) => ({ name: category })),
             featuredImage: post.featuredImage,
             readingTime: post.readingTime || '',
             updatedAt: post.updatedAt,
@@ -40,7 +40,7 @@ export async function GET(
     } catch (error) {
         console.error('Erro ao buscar post:', error);
         return NextResponse.json(
-            { error: 'Erro interno ao buscar post' },
+            { error: 'Erro interno do servidor' },
             { status: 500 }
         );
     }

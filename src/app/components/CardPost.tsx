@@ -2,6 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
+import { ImageSize } from '../types/interfaces';
 
 interface Post {
     id: number;
@@ -19,6 +20,7 @@ interface Post {
     readingTime: string;
     updatedAt: string;
     createdAt: string;
+    featuredImageSizes: Record<string, ImageSize> | null;
 }
 
 interface CardPostProps {
@@ -60,6 +62,14 @@ const stripHtml = (html: string): string => {
     return tmp.textContent || tmp.innerText || '';
 };
 
+const getImageUrlBySize = (post: Post, size: string = 'medium') => {
+    if (post.featuredImageSizes) {
+        const sizes = post.featuredImageSizes as Record<string, ImageSize>;
+        return sizes[size]?.url || post.featuredImage || '/images/default-post.jpg';
+    }
+    return post.featuredImage || '/images/default-post.jpg';
+};
+
 const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -95,7 +105,7 @@ const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
                                 <li className="hover:opacity-70 flex flex-col gap-2 w-[20vw] p-2 rounded mb-4">
                                     <div className="w-[300px] mx-auto h-[200px] relative">
                                         <Image
-                                            src={post.featuredImage || '/images/default-post.jpg'}
+                                            src={getImageUrlBySize(post)}
                                             alt={post.title}
                                             fill
                                             sizes="(max-width: 300px) 100vw, 300px"

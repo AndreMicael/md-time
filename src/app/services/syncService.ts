@@ -7,10 +7,22 @@ export class SyncService {
     // Sincroniza posts do WordPress
     static async syncWordPressPosts() {
         try {
+            console.log('Iniciando sincronização...');
             const posts = await fetchPosts();
+            console.log(`Encontrados ${posts.length} posts para sincronizar`);
+            
+            if (!Array.isArray(posts)) {
+                throw new Error('Resposta da API não é um array válido');
+            }
             
             for (const post of posts) {
-                await prisma.wordPressPost.upsert({
+                console.log(`Processando post ID: ${post?.id}`);
+                const featuredMediaUrl = post._embedded?.['wp:featuredmedia']?.[0]?.source_url || null;
+                const contentImages = this.extractImagesFromContent(post.content.rendered);
+                
+                console.log(`Sincronizando post: ${post.id} - ${post.title.rendered}`);
+                
+                const result = await prisma.wordPressPost.upsert({
                     where: { id: post.id },
                     update: {
                         title: post.title.rendered,
@@ -20,7 +32,9 @@ export class SyncService {
                         publishedAt: new Date(post.date_gmt),
                         categories: post.categories.map(String),
                         readingTime: post.yoast_head_json?.twitter_misc?.['Est. tempo de leitura'],
-                        // Adicione outros campos conforme necessário
+                        featuredImage: featuredMediaUrl,
+                        contentImages: contentImages,
+                        uagbFeaturedImageSrc: post._embedded?.['wp:featuredmedia']?.[0]?.media_details?.sizes || {},
                     },
                     create: {
                         id: post.id,
@@ -32,16 +46,34 @@ export class SyncService {
                         publishedAt: new Date(post.date_gmt),
                         categories: post.categories.map(String),
                         readingTime: post.yoast_head_json?.twitter_misc?.['Est. tempo de leitura'],
-                        // Adicione outros campos conforme necessário
+                        featuredImage: featuredMediaUrl,
+                        contentImages: contentImages,
+                        uagbFeaturedImageSrc: post._embedded?.['wp:featuredmedia']?.[0]?.media_details?.sizes || {},
                     },
                 });
+                
+                console.log(`Post ${post.id} sincronizado com sucesso:`, result);
             }
 
             console.log('WordPress posts sincronizados com sucesso!');
         } catch (error) {
-            console.error('Erro ao sincronizar posts do WordPress:', error);
-            throw error;
+            const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+            console.error('Erro ao sincronizar posts do WordPress:', errorMessage);
+            throw new Error(`Falha na sincronização: ${errorMessage}`);
         }
+    }
+
+    // Novo método auxiliar para extrair URLs de imagens do conteúdo
+    private static extractImagesFromContent(content: string): string[] {
+        const imgRegex = /<img[^>]+src="([^">]+)"/g;
+        const images: string[] = [];
+        let match;
+
+        while ((match = imgRegex.exec(content)) !== null) {
+            images.push(match[1]);
+        }
+
+        return images;
     }
 
     // Sincroniza vídeos do YouTube
@@ -74,6 +106,53 @@ export class SyncService {
             console.log('Vídeos do YouTube sincronizados com sucesso!');
         } catch (error) {
             console.error('Erro ao sincronizar vídeos do YouTube:', error);
+            throw error;
+        }
+    }
+
+    static async testDatabaseConnection() {
+        try {
+            const count = await prisma.wordPressPost.count();
+            console.log('Número de posts no banco:', count);
+            return true;
+        } catch (error) {
+            console.error('Erro ao conectar com o banco:', error);
+            return false;
+        }
+    }
+
+    static async testSync() {
+        try {
+            // Testa conexão com o banco
+            await this.testDatabaseConnection();
+            
+            // Testa busca de posts
+            const posts = await fetchPosts();
+            console.log('Posts encontrados:', posts.length);
+            
+            // Tenta sincronizar um post específico
+            if (posts.length > 0) {
+                const post = posts[0];
+                const result = await prisma.wordPressPost.create({
+                    data: {
+                        id: post.id,
+                        slug: post.slug,
+                        title: post.title.rendered,
+                        content: post.content.rendered,
+                        excerpt: post.excerpt?.rendered || '',
+                        authorName: post.yoast_head_json?.author || '',
+                        publishedAt: new Date(post.date_gmt),
+                        categories: post.categories.map(String),
+                        readingTime: post.yoast_head_json?.twitter_misc?.['Est. tempo de leitura'] || '',
+                        featuredImage: post._embedded?.['wp:featuredmedia']?.[0]?.source_url || null,
+                        uagbFeaturedImageSrc: post._embedded?.['wp:featuredmedia']?.[0]?.media_details?.sizes || {},
+                        contentImages: [],
+                    },
+                });
+                console.log('Post de teste criado:', result);
+            }
+        } catch (error) {
+            console.error('Erro no teste de sincronização:', error);
             throw error;
         }
     }

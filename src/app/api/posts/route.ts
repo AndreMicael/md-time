@@ -27,7 +27,7 @@ export async function GET(request: Request) {
                 name: post.authorName || 'Autor Desconhecido'
             },
             publishedAt: post.publishedAt,
-            categories: post.categories.map(category => ({ name: category })),
+            categories: post.categories.map((category: string) => ({ name: category })),
             featuredImage: post.featuredImage,
             readingTime: post.readingTime || '',
             updatedAt: post.updatedAt,
@@ -37,9 +37,6 @@ export async function GET(request: Request) {
         return NextResponse.json(formattedPosts);
     } catch (error) {
         console.error('Erro ao buscar posts:', error);
-        return NextResponse.json(
-            { error: 'Erro interno ao buscar posts' },
-            { status: 500 }
-        );
+        return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 });
     }
 } 

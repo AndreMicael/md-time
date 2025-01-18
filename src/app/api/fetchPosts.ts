@@ -2,25 +2,22 @@ import { Post } from '../types/interfaces';
 import { CategoryId } from '../constants/categories';
 import prisma from '@/app/lib/prisma';
 
-export const fetchPosts = async (categoryId?: string): Promise<Post[]> => {
-    try {
-        const url = categoryId 
-            ? `/api/posts?categoryId=${categoryId}`
-            : '/api/posts';
-            
-        const response = await fetch(url);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+export async function fetchPosts() {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}?_embed`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
         }
-        
-        const posts = await response.json();
-        return posts;
-    } catch (error) {
-        console.error('Erro ao buscar posts:', error);
-        return [];
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
     }
-};
+
+    const posts = await response.json();
+    console.log('Posts recuperados da API:', posts.length);
+    return posts;
+}
 
 export const getCategoryId = (categoryName: string): number | undefined => {
     const normalizedName = categoryName
