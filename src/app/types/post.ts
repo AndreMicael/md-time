@@ -4,9 +4,7 @@ export interface Post {
     title: string;
     content: string;
     excerpt: string | null;
-    author: {
-        name: string;
-    };
+    authorName: string | null;
     publishedAt: Date;
     categories: Array<{ name: string }>;
     featuredImage: string | null;

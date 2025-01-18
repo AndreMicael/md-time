@@ -10,53 +10,46 @@ export interface Post {
     excerpt: {
         rendered: string;
     };
-    _embedded?: {
-        'wp:featuredmedia'?: Array<{
+    author: {
+        name: string;
+    };
+    publishedAt: string;
+    categories: Array<{
+        name: string;
+    }>;
+    featuredImage: string;
+    featuredImageSizes: null | {
+        [key: string]: {
+            file: string;
+            width: number;
+            height: number;
             source_url: string;
-        }>;
-    };
-    categories: number[];
-    date_gmt: string;
-    yoast_head_json?: {
-        og_image?: Array<{ url: string }>;
-        twitter_misc?: {
-            'Escrito por': string;
-            'Est. tempo de leitura': string;
         };
-        author?: string;
     };
-} 
-
-export interface ImageSize {
-  url: string;
-  width: number;
-  height: number;
-  cropped: boolean;
+    uagbFeaturedImageSrc: {
+        full: ImageSize;
+        large: ImageSize;
+        medium: ImageSize;
+        thumbnail: ImageSize;
+        medium_large: ImageSize;
+    };
+    readingTime: string;
+    updatedAt: string;
+    createdAt: string;
 }
 
-export interface FeaturedImageSizes {
-  full: ImageSize;
-  thumbnail: ImageSize;
-  medium: ImageSize;
-  medium_large: ImageSize;
-  large: ImageSize;
-  '1536x1536': ImageSize;
-  '2048x2048': ImageSize;
-} 
-
-export function formatImageSizes(uagbFeaturedImageSrc: any) {
-  const sizes: Record<string, ImageSize> = {};
-  
-  Object.entries(uagbFeaturedImageSrc).forEach(([key, value]: [string, any]) => {
-    if (Array.isArray(value) && value.length === 4) {
-      sizes[key] = {
-        url: value[0],
-        width: value[1],
-        height: value[2],
-        cropped: value[3]
-      };
-    }
-  });
-  
-  return sizes;
+interface ImageSize {
+    file: string;
+    width: number;
+    height: number;
+    sources: {
+        'image/webp': {
+            file: string;
+            filesize: number;
+            source_url: string;
+        };
+    };
+    mime_type: string;
+    source_url: string;
+    filesize?: number;
 }

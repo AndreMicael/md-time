@@ -11,12 +11,18 @@ import Navbar from '../components/Navbar';
 
 interface Post {
     id: number;
+    title: string;
     slug: string;
-    title: {
-        rendered: string;
+    categories: {
+        name: string;
+    }[];
+    featuredImage: string | null;
+    publishedAt: string;
+    author: {
+        name: string;
     };
-    categories: any;
-    yoast_head_json: any;
+    readingTime: string;
+    content: string;
     excerpt: {
         rendered: string;
     };
@@ -44,11 +50,14 @@ const Home = () => {
         const getPosts = async () => {
             try {
                 const fetchedPosts = await fetchPosts();
-                console.log('Posts recebidos:', fetchedPosts[0]); // Verifique os dados no console
+                console.log('Posts recebidos:', fetchedPosts); // Verifique os dados no console
+                if (!Array.isArray(fetchedPosts)) {
+                    throw new Error('Dados inválidos recebidos');
+                }
                 setPosts(fetchedPosts);
             } catch (err) {
-                setError('Erro ao carregar os posts');
-                console.error(err);
+                setError('Erro ao carregar os posts: ' + (err instanceof Error ? err.message : 'Erro desconhecido'));
+                console.error('Detalhes do erro:', err);
             } finally {
                 setLoading(false);
             }
@@ -81,10 +90,10 @@ const Home = () => {
 
     return (
         <div className="container mx-auto">
-           {/* <SliderSuperior slug="lancamento-exclusivo-orient-stock-car-speedtech-mbttc018-f49tt037-e-yn8tt006" posts={posts} />*/}
+            <SliderSuperior slug="lancamento-exclusivo-orient-stock-car-speedtech-mbttc018-f49tt037-e-yn8tt006" /> 
 
             <div className="flex flex-col w-full">
-                  <CardPost posts={posts} />  
+                 {/* <CardPost posts={posts} />  */}
                 <Newsletter />
             </div>
         </div>

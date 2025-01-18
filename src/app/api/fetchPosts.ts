@@ -3,7 +3,7 @@ import { CategoryId } from '../constants/categories';
 import prisma from '@/app/lib/prisma';
 
 export async function fetchPosts() {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}?_embed`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts`, {
         method: 'GET',
         headers: {
             'Accept': 'application/json',
@@ -14,9 +14,8 @@ export async function fetchPosts() {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const posts = await response.json();
-    console.log('Posts recuperados da API:', posts.length);
-    return posts;
+    const { data } = await response.json();
+    return data;
 }
 
 export const getCategoryId = (categoryName: string): number | undefined => {
