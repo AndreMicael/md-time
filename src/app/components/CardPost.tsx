@@ -57,9 +57,14 @@ const retornarIdCategoria = (id: number): string => {
 };
 
 const stripHtml = (html: string): string => {
-    const tmp = document.createElement('div');
-    tmp.innerHTML = html;
-    return tmp.textContent || tmp.innerText || '';
+    // Verificação para ambiente client-side
+    if (typeof window !== 'undefined') {
+        const tmp = document.createElement('div');
+        tmp.innerHTML = html;
+        return tmp.textContent || tmp.innerText || '';
+    }
+    // Fallback para server-side
+    return html.replace(/<[^>]*>/g, '');
 };
 
 const getImageUrlBySize = (post: Post, size: string = 'medium') => {
@@ -122,9 +127,11 @@ const CardPost: React.FC<CardPostProps> = ({ posts, postsPerPage = 6 }) => {
                                             : post.title}
                                     </div>
                                     <div className="w-[18vw] mx-auto text-sm text-justify">
-                                        {stripHtml(post.content).length > 95
-                                            ? stripHtml(post.content).substring(0, 95) + '...'
-                                            : stripHtml(post.content)}
+                                        {typeof post.content === 'string' 
+                                            ? (stripHtml(post.content).length > 95
+                                                ? stripHtml(post.content).substring(0, 95) + '...'
+                                                : stripHtml(post.content))
+                                            : ''}
                                     </div>
                                     <div>
                                         {post.categories.map((category, index) => (

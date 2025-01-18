@@ -53,6 +53,13 @@ const getImageUrl = (post: any) => {
     return '/imagem-padrao.jpg';
 };
 
+const stripHtml = (html: string): string => {
+    if (typeof window === 'undefined') return html.replace(/<[^>]*>/g, '');
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
+};
+
 const SliderSuperior: React.FC<SliderProps> = ({ slug, posts }) => {
     const post = posts.find(post => post.slug === slug);
     if (!post) return null;
@@ -61,10 +68,7 @@ const SliderSuperior: React.FC<SliderProps> = ({ slug, posts }) => {
     
     const autorPost = post.author?.name || 'Autor não informado';
     const tempoLeitura = post.readingTime || '5 min';
-    
-    const removerTagsHTML = (texto: string) => {
-        return texto.replace(/<[^>]*>/g, '');
-    };
+
 
     return (
         <div className="w-full relative clip-path-bottom-skew">
@@ -85,9 +89,7 @@ const SliderSuperior: React.FC<SliderProps> = ({ slug, posts }) => {
                             </span>
                         </p>
                         <p>
-                            {removerTagsHTML(post.content).length > 500 
-                                ? removerTagsHTML(post.content).substring(0, 500) + '...' 
-                                : removerTagsHTML(post.content)}
+                            {stripHtml(post.content)}
                         </p>
                         <Link
                             key={post.id}

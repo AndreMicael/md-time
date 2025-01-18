@@ -1,46 +1,49 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/app/lib/prisma';
+import { formatImageSizes } from '@/app/types/interfaces';
 
-export async function GET(
-    request: Request,
-    { params }: { params: { slug: string } }
-) {
+export async function GET() {
     try {
-        const post = await prisma.wordPressPost.findUnique({
-            where: {
-                slug: params.slug
+        const posts = await prisma.wordPressPost.findMany({
+            orderBy: {
+                published_at: 'desc'
             }
         });
 
-        if (!post) {
+        if (!posts || posts.length === 0) {
             return NextResponse.json(
-                { error: 'Post não encontrado' },
+                { data: [] },
                 { status: 404 }
             );
         }
 
-        const formattedPost = {
-            id: post.id,
-            slug: post.slug,
-            title: post.title,
-            content: post.content,
-            excerpt: post.excerpt || '',
+        const formattedPosts = posts.map(post => ({
+            id: post.id || '',
+            slug: post.slug || '',
+            title: { rendered: post.title || '' },
+            content: { rendered: post.content || '' },
+            excerpt: { rendered: post.excerpt || '' },
             author: {
-                name: post.authorName || 'Autor Desconhecido'
+                name: post.author_name || 'Autor Desconhecido'
             },
-            publishedAt: post.publishedAt,
-            categories: post.categories.map((category: string) => ({ name: category })),
-            featuredImage: post.featuredImage,
-            readingTime: post.readingTime || '',
-            updatedAt: post.updatedAt,
-            createdAt: post.createdAt
-        };
+            publishedAt: post.published_at || null,
+            categories: post.categories || [],
+            featuredImage: post.featured_image || null,
+            featuredImageSizes: post.featured_image_sizes ? JSON.parse(post.featured_image_sizes) : null,
+            uagbFeaturedImageSrc: post.uagb_featured_image_src 
+                ? formatImageSizes(post.uagb_featured_image_src)
+                : null,
+            readingTime: post.reading_time || '',
+            updatedAt: post.updated_at || null,
+            createdAt: post.created_at || null,
+            contentImages: post.content_images || []
+        }));
 
-        return NextResponse.json(formattedPost);
+        return NextResponse.json({ data: formattedPosts });
     } catch (error) {
-        console.error('Erro ao buscar post:', error);
+        console.error('Erro ao buscar posts:', error);
         return NextResponse.json(
-            { error: 'Erro interno do servidor' },
+            { error: 'Erro interno do servidor', data: null },
             { status: 500 }
         );
     }

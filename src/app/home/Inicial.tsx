@@ -81,10 +81,10 @@ const Home = () => {
 
     return (
         <div className="container mx-auto">
-            <SliderSuperior slug="lancamento-exclusivo-orient-stock-car-speedtech-mbttc018-f49tt037-e-yn8tt006" posts={posts} />
+           {/* <SliderSuperior slug="lancamento-exclusivo-orient-stock-car-speedtech-mbttc018-f49tt037-e-yn8tt006" posts={posts} />*/}
 
             <div className="flex flex-col w-full">
-                <CardPost posts={posts} />
+                  <CardPost posts={posts} />  
                 <Newsletter />
             </div>
         </div>

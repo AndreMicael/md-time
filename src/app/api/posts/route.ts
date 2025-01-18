@@ -13,30 +13,35 @@ export async function GET(request: Request) {
                 }
             } : undefined,
             orderBy: {
-                publishedAt: 'desc'
+                published_at: 'desc'
             }
         });
 
         const formattedPosts = posts.map(post => ({
             id: post.id,
             slug: post.slug,
-            title: post.title,
-            content: post.content,
-            excerpt: post.excerpt || '',
+            title: { rendered: post.title },
+            content: { rendered: post.content },
+            excerpt: { rendered: post.excerpt || '' },
             author: {
-                name: post.authorName || 'Autor Desconhecido'
+                name: post.author_name || 'Autor Desconhecido'
             },
-            publishedAt: post.publishedAt,
-            categories: post.categories.map((category: string) => ({ name: category })),
-            featuredImage: post.featuredImage,
-            readingTime: post.readingTime || '',
-            updatedAt: post.updatedAt,
-            createdAt: post.createdAt
+            publishedAt: post.published_at,
+            categories: post.categories.map(category => ({ name: category })),
+            featuredImage: post.featured_image,
+            featuredImageSizes: post.featured_image_sizes ? JSON.parse(post.featured_image_sizes) : null,
+            uagbFeaturedImageSrc: post.uagb_featured_image_src,
+            readingTime: post.reading_time || '',
+            updatedAt: post.updated_at,
+            createdAt: post.created_at
         }));
 
-        return NextResponse.json(formattedPosts);
+        return NextResponse.json({ data: formattedPosts });
     } catch (error) {
         console.error('Erro ao buscar posts:', error);
-        return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 });
+        return NextResponse.json(
+            { error: 'Erro interno do servidor', data: [] },
+            { status: 500 }
+        );
     }
 } 

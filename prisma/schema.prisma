@@ -8,20 +8,21 @@ datasource db {
 }
 
 model wordPressPost {
-  id                  Int      @id
-  slug                String   @unique
-  title               String
-  content             String   @db.Text
-  excerpt             String?  @db.Text
-  authorName          String?
-  publishedAt         DateTime
-  categories          String[]
-  featuredImage       String?
-  uagbFeaturedImageSrc Json    // Armazenará as diferentes versões da imagem
-  readingTime         String?
-  updatedAt           DateTime @updatedAt
-  createdAt           DateTime @default(now())
-  contentImages       String[] @default([])
+  id                    Int      @id
+  slug                  String   @unique
+  title                 String
+  content               String   @db.Text
+  excerpt               String?  @db.Text
+  author_name           String?
+  published_at          DateTime
+  categories            String[]
+  featured_image        String?
+  featured_image_sizes  String?
+  uagb_featured_image_src Json    // Armazenará as diferentes versões da imagem
+  reading_time          String?
+  updated_at            DateTime @updatedAt
+  created_at            DateTime @default(now())
+  content_images        String[] @default([])
 
   @@map("wordpress_posts")
 }

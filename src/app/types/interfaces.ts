@@ -44,7 +44,7 @@ export interface FeaturedImageSizes {
   '2048x2048': ImageSize;
 } 
 
-function formatImageSizes(uagbFeaturedImageSrc: any) {
+export function formatImageSizes(uagbFeaturedImageSrc: any) {
   const sizes: Record<string, ImageSize> = {};
   
   Object.entries(uagbFeaturedImageSrc).forEach(([key, value]: [string, any]) => {
