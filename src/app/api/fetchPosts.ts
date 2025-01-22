@@ -1,21 +1,21 @@
 import { Post } from '../types/interfaces';
 import { CategoryId } from '../constants/categories';
 import prisma from '@/app/lib/prisma';
-
 export async function fetchPosts() {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts`, {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
+    
+    const apiUrl = process.env.WORDPRESS_API_URL || 'https://mdtime.com.br/wp-json/wp/v2/posts?_embed';
+    
+    try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error(`Erro ao buscar posts: ${response.statusText}`);
         }
-    });
-
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Erro ao buscar posts do WordPress:', error);
+        throw error;
     }
-
-    const { data } = await response.json();
-    return data;
 }
 
 export const getCategoryId = (categoryName: string): number | undefined => {

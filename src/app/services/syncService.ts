@@ -32,6 +32,10 @@ export class SyncService {
                     console.warn(`Post ID ${post.id} tem uma data de publicação inválida. Armazenando a data original.`);
                 }
                 
+                const categories = post.categories
+                    .map((cat: any) => cat.name)
+                    .filter((name: string | undefined): name is string => name !== undefined);
+                
                 const result = await prisma.wordPressPost.upsert({
                     where: { id: post.id },
                     update: {
@@ -41,11 +45,12 @@ export class SyncService {
                         author_name: post.yoast_head_json?.author,
                         published_at: validPublishedAt,
                         original_published_at: originalPublishedAt, // Armazenar a data original
-                        categories: post.categories.map(String),
+                        categories: categories,
                         reading_time: post.yoast_head_json?.twitter_misc?.['Est. tempo de leitura'],
                         featured_image: featuredMediaUrl,
+                        featured_image_sizes: JSON.stringify(post._embedded?.['wp:featuredmedia']?.[0]?.media_details?.sizes || {}),
                         content_images: contentImages,
-                        uagb_featured_image_src: post._embedded?.['wp:featuredmedia']?.[0]?.media_details?.sizes || {},
+                        uagb_featured_image_src: JSON.stringify(post._embedded?.['wp:featuredmedia']?.[0]?.media_details?.sizes || {}),
                     },
                     create: {
                         id: post.id,
@@ -55,11 +60,12 @@ export class SyncService {
                         excerpt: post.excerpt?.rendered,
                         author_name: post.yoast_head_json?.author,
                         published_at: validPublishedAt,
-                        categories: post.categories.map(String),
+                        categories: categories,
                         reading_time: post.yoast_head_json?.twitter_misc?.['Est. tempo de leitura'],
                         featured_image: featuredMediaUrl,
+                        featured_image_sizes: JSON.stringify(post._embedded?.['wp:featuredmedia']?.[0]?.media_details?.sizes || {}),
                         content_images: contentImages,
-                        uagb_featured_image_src: post._embedded?.['wp:featuredmedia']?.[0]?.media_details?.sizes || {},
+                        uagb_featured_image_src: JSON.stringify(post._embedded?.['wp:featuredmedia']?.[0]?.media_details?.sizes || {}),
                     },
                 });
                 
@@ -153,10 +159,11 @@ export class SyncService {
                         excerpt: post.excerpt?.rendered || '',
                         author_name: post.yoast_head_json?.author || '',
                         published_at: new Date(post.date_gmt) || null,
-                        categories: post.categories.map(String),
+                        categories: post.categories.map((cat: any) => cat.name).filter((name: string | undefined): name is string => name !== undefined),
                         reading_time: post.yoast_head_json?.twitter_misc?.['Est. tempo de leitura'] || '',
                         featured_image: post._embedded?.['wp:featuredmedia']?.[0]?.source_url || null,
-                        uagb_featured_image_src: post._embedded?.['wp:featuredmedia']?.[0]?.media_details?.sizes || {},
+                        featured_image_sizes: JSON.stringify(post._embedded?.['wp:featuredmedia']?.[0]?.media_details?.sizes || {}),
+                        uagb_featured_image_src: JSON.stringify(post._embedded?.['wp:featuredmedia']?.[0]?.media_details?.sizes || {}),
                         content_images: [],
                     },
                 });
@@ -167,4 +174,4 @@ export class SyncService {
             throw error;
         }
     }
-} 
+}
