@@ -12,64 +12,67 @@ export class SyncService {
             console.log(`Encontrados ${posts.length} posts para sincronizar`);
             
             if (!Array.isArray(posts)) {
+                console.error('Resposta da API:', posts);
                 throw new Error('Resposta da API não é um array válido');
             }
             
             for (const post of posts) {
-                console.log(`Processando post ID: ${post?.id}`);
-                const featuredMediaUrl = post._embedded?.['wp:featuredmedia']?.[0]?.source_url || null;
-                const contentImages = this.extractImagesFromContent(post.content.rendered);
-                
-                console.log(`Sincronizando post: ${post.id} - ${post.title.rendered}`);
-                
-                const publishedAt = new Date(post.datePublished || post.date_gmt);
-                const validPublishedAt = isNaN(publishedAt.getTime()) ? null : publishedAt;
-                
-                // Armazenar a data original como string, mesmo se for inválida
-                const originalPublishedAt = post.datePublished || post.date_gmt;
-                
-                if (!validPublishedAt) {
-                    console.warn(`Post ID ${post.id} tem uma data de publicação inválida. Armazenando a data original.`);
+                try {
+                    console.log(`Processando post ID: ${post?.id}`);
+                    const featuredMediaUrl = post._embedded?.['wp:featuredmedia']?.[0]?.source_url || null;
+                    const contentImages = this.extractImagesFromContent(post.content.rendered);
+                    
+                    console.log(`Sincronizando post: ${post.id} - ${post.title.rendered}`);
+                    
+                    // Tratamento correto das datas
+                    const publishedAt = post.date_gmt ? new Date(post.date_gmt) : null;
+                    const validPublishedAt = publishedAt && !isNaN(publishedAt.getTime()) ? publishedAt : null;
+                    
+                    if (!validPublishedAt) {
+                        console.warn(`Post ID ${post.id} tem uma data de publicação inválida.`);
+                    }
+                    
+                    const categories = Array.isArray(post.categories) 
+                        ? post.categories
+                            .map((cat: any) => cat.name)
+                            .filter((name: string | undefined): name is string => name !== undefined)
+                        : [];
+                    
+                    const postId = parseInt(post.id.toString(), 10);
+                    if (isNaN(postId)) {
+                        throw new Error(`ID inválido para o post: ${post.id}`);
+                    }
+                    
+                    const postData = {
+                        title: post.title?.rendered || '',
+                        content: post.content?.rendered || '',
+                        excerpt: post.excerpt?.rendered || '',
+                        author_name: post.yoast_head_json?.author || '',
+                        published_at: validPublishedAt,
+                        categories: categories || [],
+                        reading_time: post.yoast_head_json?.twitter_misc?.['Est. tempo de leitura'] || '',
+                        featured_image: featuredMediaUrl,
+                        featured_image_sizes: JSON.stringify(post._embedded?.['wp:featuredmedia']?.[0]?.media_details?.sizes || {}),
+                        content_images: contentImages,
+                        uagb_featured_image_src: post._embedded?.['wp:featuredmedia']?.[0]?.media_details?.sizes || {}
+                    };
+                    
+                    const result = await prisma.wordPressPost.upsert({
+                        where: { id: postId },
+                        update: postData,
+                        create: {
+                            id: postId,
+                            slug: post.slug || '',
+                            ...postData
+                        },
+                    });
+                    
+                    console.log(`Post ${post.id} sincronizado com sucesso:`, result);
+                } catch (postError) {
+                    console.error(`Erro ao processar post ${post?.id}:`, postError);
+                    // Continua com o próximo post mesmo se houver erro
+                    continue;
                 }
-                
-                const categories = post.categories
-                    .map((cat: any) => cat.name)
-                    .filter((name: string | undefined): name is string => name !== undefined);
-                
-                const result = await prisma.wordPressPost.upsert({
-                    where: { id: post.id },
-                    update: {
-                        title: post.title.rendered,
-                        content: post.content.rendered,
-                        excerpt: post.excerpt?.rendered,
-                        author_name: post.yoast_head_json?.author,
-                        published_at: validPublishedAt,
-                        original_published_at: originalPublishedAt, // Armazenar a data original
-                        categories: categories,
-                        reading_time: post.yoast_head_json?.twitter_misc?.['Est. tempo de leitura'],
-                        featured_image: featuredMediaUrl,
-                        featured_image_sizes: JSON.stringify(post._embedded?.['wp:featuredmedia']?.[0]?.media_details?.sizes || {}),
-                        content_images: contentImages,
-                        uagb_featured_image_src: JSON.stringify(post._embedded?.['wp:featuredmedia']?.[0]?.media_details?.sizes || {}),
-                    },
-                    create: {
-                        id: post.id,
-                        slug: post.slug,
-                        title: post.title.rendered,
-                        content: post.content.rendered,
-                        excerpt: post.excerpt?.rendered,
-                        author_name: post.yoast_head_json?.author,
-                        published_at: validPublishedAt,
-                        categories: categories,
-                        reading_time: post.yoast_head_json?.twitter_misc?.['Est. tempo de leitura'],
-                        featured_image: featuredMediaUrl,
-                        featured_image_sizes: JSON.stringify(post._embedded?.['wp:featuredmedia']?.[0]?.media_details?.sizes || {}),
-                        content_images: contentImages,
-                        uagb_featured_image_src: JSON.stringify(post._embedded?.['wp:featuredmedia']?.[0]?.media_details?.sizes || {}),
-                    },
-                });
-                
-                console.log(`Post ${post.id} sincronizado com sucesso:`, result);
             }
 
             console.log('WordPress posts sincronizados com sucesso!');

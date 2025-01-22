@@ -1,31 +1,10 @@
-import { fetchPosts } from '@/app/api/fetchPosts';
+import { fetchSinglePost } from '@/app/api/fetchPosts';
 import Image from 'next/image';
 import Link from 'next/link';
 import NavbarHome from './NavbarHome';
 import { useState, useEffect } from 'react';
+import { Post } from '../types/interfaces';
 
-interface Post {
-    id: string;
-    slug: string;
-    title: {
-        rendered: string;
-    };
-    content: {
-        rendered: string;
-    };
-    excerpt?: {
-        rendered: string;
-    };
-    publishedAt: string;
-    author?: {
-        name: string;
-    };
-    readingTime?: string;
-    featuredImage?: string;
-    categories: Array<{
-        name: string;
-    }>;
-}
 
 interface SliderProps {
     slug: string;
@@ -60,7 +39,7 @@ const getImageUrl = (post: any) => {
     if (post.featuredImage) {
         return post.featuredImage;
     }
-    return '/imagem-padrao.jpg';
+    return 'https://i0.wp.com/mdtime.com.br/wp-content/uploads/2025/01/WhatsApp-Image-2025-01-10-at-16.06.48.webp?resize=1200%2C675&ssl=1';
 };
 
 const stripHtml = (html: string): string => {
@@ -71,33 +50,32 @@ const stripHtml = (html: string): string => {
 };
 
 const SliderSuperior: React.FC<SliderProps> = ({ slug }) => {
-    const [posts, setPosts] = useState<Post[]>([]);
+    const [post, setPost] = useState<Post | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        const getPosts = async () => {
+        const getPost = async () => {
             try {
-                const fetchedPosts = await fetchPosts();
-                if (!Array.isArray(fetchedPosts)) {
-                    throw new Error('Dados inválidos recebidos');
+                const fetchedPost = await fetchSinglePost(slug);
+                if (!fetchedPost) {
+                    throw new Error('Post não encontrado');
                 }
-                setPosts(fetchedPosts);
+                console.log('Post recebido:', fetchedPost);
+                setPost(fetchedPost);
             } catch (err) {
-                setError(err instanceof Error ? err.message : 'Erro ao carregar os posts');
+                setError(err instanceof Error ? err.message : 'Erro ao carregar o post');
                 console.error('Detalhes do erro:', err);
             } finally {
                 setLoading(false);
             }
         };
 
-        getPosts();
-    }, []);
+        getPost();
+    }, [slug]);
     
     if (loading) return <div>Carregando...</div>;
     if (error) return <div className="text-red-500 text-center">{error}</div>;
-
-    const post = posts.length > 0 ? posts.find(post => post.slug === slug) : null;
     if (!post) return null;
 
     const imageUrl = getImageUrl(post);
@@ -113,26 +91,28 @@ const SliderSuperior: React.FC<SliderProps> = ({ slug }) => {
                     </div>
                     <div className="absolute bg-black p-4 rounded-2xl flex bg-opacity-40 flex-col gap-2 bottom-4 text-sm left-[20vw] w-[35vw] z-[2] text-white">
                         <p className="flex gap-2">
-                            <span>{post.author?.name || 'Autor não informado'}</span> •
-                            <span>{formatarData(post.publishedAt)}</span> •
+                            <span>{post.author ? post.author.name : 'Autor não informado'}</span> •
+                            <span>{formatarData(post.date || post.publishedAt)}</span> •
                             <span className="px-2 bg-red-500 rounded-lg font-medium">
-                                {post.categories && post.categories.length > 0 
-                                    ? retornarIdCategoria(post.categories[0].name) 
+                                {post.categories && post.categories[0]
+                                    ? retornarIdCategoria(post.categories[0].id.toString())
                                     : 'Categoria não disponível'}
                             </span>
                         </p>
 
                         <div className="text-2xl font-bold">
-                          {stripHtml(post.title?.rendered) || 'Título não disponível'}
+                            {post.title ? stripHtml(post.title.rendered) : 'Título não disponível'}
                         </div>
                     
                         <p>
-                            {stripHtml(post.excerpt?.rendered || '')}
+                            {post.excerpt ? stripHtml(post.excerpt.rendered) : ''}
                         </p>
 
                         <Link
                             key={post.id}
-                            href={`${post.categories.map((cat: { name: string }) => retornarIdCategoria(cat.name)).join(',').toLowerCase()}/articles/${post.slug}`}
+                            href={`/${post.categories && post.categories[0]
+                                ? retornarIdCategoria(post.categories[0].id.toString()).toLowerCase()
+                                : 'sem-categoria'}/articles/${post.slug}`}
                         >
                             <button className="hover:bg-white hover:bg-opacity-30 transition ease-in-out border-[1.5px] py-1 text-white font-bold rounded-lg px-4 self-start">
                                 Ver Mais
